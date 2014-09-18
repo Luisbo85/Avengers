@@ -51,7 +51,7 @@ class UserCtrl{
         require('views/userInserted.php');
      }
      else{
-		require('views/error.php');
+		require('views/Error.php');
      }
    }
   
@@ -59,14 +59,14 @@ class UserCtrl{
     * Delete a user  
     **/
    private function delete(){
-   	 $ID=isset($_POST['ID'])?$this->validateNumbers($_POST['ID']):0;
+   	 $ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):0;
 	 $Result=$this->model->delete($ID);
 	 
 	 if($Result){
 	 	require('views/userDeleted.php');
 	 }
 	 else{
-	 	require('views/error.php');
+	 	require('views/Error.php');
 	 }
    }
    
@@ -89,7 +89,7 @@ class UserCtrl{
 	  	require('views/userModified.php');
 	  }
 	  else{
-	 	require('views/error.php');
+	 	require('views/Error.php');
 	  }
     }
 
@@ -98,15 +98,15 @@ class UserCtrl{
 	**/ 
     private function select(){
       //Validate variables and if variables is set 
-	  $ID=isset($_POST['ID'])?$this->validateNumbers($_POST['ID']):0;
+	  $ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):0;
       //Show information of an user
 	  $User=$this->model->select($ID);
 	 
-	  if(is_array($Users)){
+	  if(is_array($User)){
 	  	require('views/userSelected.php');
 	  }
 	  else{
-	 	require('views/error.php');
+	 	require('views/Error.php');
 	  }
     }
    

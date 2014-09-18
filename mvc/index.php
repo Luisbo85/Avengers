@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-	 ini_set('display_errors', 1);
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
 
 	//get query args
 	switch($_GET['ctrl']) {
@@ -18,6 +18,10 @@ error_reporting(E_ALL);
 		case 'location':
 			require('controllers/locationCtrl.php');
 			$ctrl = new LocationCtrl();
+			break;
+		case 'inventory':
+			require('controllers/inventoryCtrl.php');
+			$ctrl= new InventoryCtrl();
 			break;
 		default:
 			break;

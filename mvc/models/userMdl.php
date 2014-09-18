@@ -69,12 +69,6 @@ class UserMdl{
    {
    	  $Users=array();
 	  //Select from the Database
-	  $this->Name=$Name;
-	  $this->MaternalLastname=$MaternalLastname;
-	  $this->PaternalLastname=$PaternalLastname;
-	  $this->Email=$Email;
-	  $this->Job=$Job;
-	  $this->Pass=$Pass;
       return $Users;   
    }
    
