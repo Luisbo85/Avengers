@@ -1,8 +1,5 @@
 <?php
 
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
-
 	//get query args
 	switch($_GET['ctrl']) {
 		case 'vehicle':
@@ -28,5 +25,7 @@
 	}
 	
 	//execute ctlr
-	$ctrl->run();
+	if(isset($ctrl)) {
+		$ctrl->run();
+	}
 ?>
