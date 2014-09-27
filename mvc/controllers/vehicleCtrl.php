@@ -77,19 +77,16 @@ class VehicleCtrl {
 	}
 
 	/**
-	 *Gets a vahicle info
+	 *Gets a vehicle info
 	 */
 	private function select() {
-		//validate variables, validar si esta seteado y que sea lo que queremos
-		$vin = isset($_POST['vin']) ? $this->validateNumber($_POST['vin']) : '';
-		$brand = isset($_POST['brand']) ? $this->validateNumber($_POST['brand']) : '';
-		$type = isset($_POST['type']) ? $this->validateNumber($_POST['type']) : '';
-		$model = isset($_POST['model']) ? $this->validateNumber($_POST['model']) : '';
+		//validate variables
+		$idVehicle = isset($_POST['idVehicle']) ? validateNumber($_POST['idVehicle']) : '';
 
-		//use model to insert
-		$result = $this->model->select($vin, $brand, $type, $model);
+		//use model to select
+		$result = $this->model->select($idVehicle);
 
-		//insert successful
+		//select successful
 		if($result) {
 			//load the view
 			require('views/vehicleSelected.php');

@@ -66,19 +66,17 @@
 		}
 
 		/*
-		 *@param int $vin
-		 *@param string $brand
-		 *@param string $type
-		 *@param int $model
+		 *@param int $idVehicle
 		 *@return true in success
 		 *Gets a vehicle data
 		 */
-		function select($vin, $brand, $type, $model) {
+		function select($idVehicle) {
 			//conection a la base de datos
-			$this->$vin = $vin;
-			$this->$brand = $brand;
-			$this->$type = $type;
-			$this->$model = $model;			
+			$this->$idVehicle = $idVehicle;		
+
+			if(empty($this->$idVehicle)) {
+                return false;
+            }
 
 			//if success
 			return true;
