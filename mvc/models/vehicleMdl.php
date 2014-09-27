@@ -4,6 +4,7 @@
 		private $brand;
 		private $type;
 		private $model;
+		private $idVehicle;
 		
 		function __construct() {
 			
@@ -29,19 +30,17 @@
 		}
 
 		/*
-		 *@param int $vin
-		 *@param string $brand
-		 *@param string $type
-		 *@param int $model
+		 *@param int $idVehicle
 		 *@return true in success
 		 *Delete a vehicle
 		 */
-		function delete($vin, $brand, $type, $model) {
+		function delete($idVehicle) {
 			//conection a la base de datos
-			$this->$vin = $vin;
-			$this->$brand = $brand;
-			$this->$type = $type;
-			$this->$model = $model;			
+			$this->$idVehicle = $idVehicle;
+
+			if(empty($this->$idVehicle)) {
+                return false;
+            }
 
 			//if success
 			return true;
