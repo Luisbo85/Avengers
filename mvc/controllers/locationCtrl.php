@@ -1,17 +1,17 @@
 <?php
-	class LocationCtrl {
+	class LocationCtrl extends ValidationCtrl {
 		private $model;
+		
 		/**
 		 *Execute actions based on the selected action
 		 *from user in query args
 		 */
-
-		 function LocationCtrl() {
+		function LocationCtrl() {
 		 	require('models/locationMdl.php');
 		 	$this->model = new LocationMdl();
-		 }
+		}
 
-		 function run() {
+		function run() {
 			switch($_GET['act']) {
 				case 'create':
 					//user is valid and have permission
