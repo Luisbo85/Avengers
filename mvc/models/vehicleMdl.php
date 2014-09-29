@@ -10,7 +10,7 @@
 			
 		}
 
-		/*
+		/**
 		 *@param int $vin
 		 *@param string $brand
 		 *@param string $type
@@ -29,7 +29,7 @@
 			return true;
 		}
 
-		/*
+		/**
 		 *@param int $idVehicle
 		 *@return true in success
 		 *Delete a vehicle
@@ -46,7 +46,7 @@
 			return true;
 		}
 
-		/*
+		/**
 		 *@param int $vin
 		 *@param string $brand
 		 *@param string $type
@@ -65,7 +65,7 @@
 			return true;
 		}
 
-		/*
+		/**
 		 *@param int $idVehicle
 		 *@return true in success
 		 *Gets a vehicle data
