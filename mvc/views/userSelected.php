@@ -1,3 +1,4 @@
 <?php
-  echo 'User Information';
+  echo 'User Information','<br/>';
+  var_dump($User);
 ?>

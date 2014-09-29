@@ -27,6 +27,10 @@
 					//User is valid and have permissions
 					$this->select();
 					break;
+				case 'list':
+					//User is valid and have permissions
+					$this->listUsers();
+					break;
 				default:
 				  break;
 			}
@@ -119,6 +123,19 @@
 		  	else{
 		 		require('views/Error.php');
 			}
+		}
+
+		/**
+		 * List all system´s users with information about user
+		 */
+		private function listUsers(){
+			$Users=$this->model->listUsers();
+			if(is_array($Users)){
+		  		require('views/userList.php');
+			}
+		  	else{
+		 		require('views/Error.php');
+			}	
 		}
 	   
 	}
