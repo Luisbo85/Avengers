@@ -1,10 +1,15 @@
 <?php
 	class LocationMdl {
+		private $idLocation;
 		private $name;
 		private $extraLoca;
 		
 		function __construct() {
-			
+			require("databaseConfig.inc");
+			$this->bdDriver = new mysqli($host, $user, $pass, $bd);
+			if($this->bdDriver->connect_error) {
+				die("no se puede conectar");
+			}
 		}
 
 		/*
@@ -14,57 +19,79 @@
 		 *Insert in database new location
 		 */
 		function create($name, $extraLoca) {
-			//conection a la base de datos
-			$this->$name = $name;
-			$this->$extraLoca = $extraLoca;		
+			if($name && $extraLoca) {
+				$this->$name = $this->bdDriver->escape_string($name);
+				$this->$extraLoca = $this->bdDriver->escape_string($extraLoca);
 
-			//true if success
-			return true;
+				$result = $this->bdDriver->query("INSERT INTO Location(locationName, extraLocation, status) VALUES('" . $name ."', '" . $extraLoca ."', 1)");
+
+				return $result;
+			}
+
+			return false;
 		}
 
 		/*
-		 *@param string $name
-		 *@param string $extraLoca
+		 *@param int $idLocation
 		 *@return true in success
 		 *Delete a location in DB
 		 */
-		function delete($name, $extraLoca) {
-			//conection a la base de datos
-			$this->$name = $name;
-			$this->$extraLoca = $extraLoca;		
+		function delete($idLocation) {
+			if($idLocation) {
+				$this->$idLocation = $this->bdDriver->escape_string($idLocation);
 
-			//true if success
-			return true;
+				$result = $this->bdDriver->query("UPDATE Location SET status = 0 WHERE idLocation = " . $idLocation);
+
+				return $result;
+			}
+
+			return false;
 		}
 
 		/*
-		 *@param string $name
-		 *@param string $extraLoca
+		 *@param int $idLocation
 		 *@return true in success
 		 *Selects a location info
 		 */
-		function select($name, $extraLoca) {
-			//conection a la base de datos
-			$this->$name = $name;
-			$this->$extraLoca = $extraLoca;		
+		function select($idLocation) {
+			if($idLocation) {
+				$this->$idLocation = $this->bdDriver->escape_string($idLocation);
 
-			//true if success
-			return true;
+				$result = $this->bdDriver->query("SELECT * FROM Location WHERE idLocation = " . $idLocation);
+				return $result;
+			}
+
+			return false;
 		}
 
 		/*
+		 *@return result set with all locations in DB
+		 *Selects all locations
+		 */
+		function selectAll() {
+			$result = $this->bdDriver->query("SELECT * FROM Location");
+			return $result;
+		}
+
+		/*
+		 *@patam int $idLocation
 		 *@param string $name
 		 *@param string $extraLoca
 		 *@return true in success
 		 *Updates a location info
 		 */
-		function update($name, $extraLoca) {
-			//conection a la base de datos
-			$this->$name = $name;
-			$this->$extraLoca = $extraLoca;		
+		function update($idLocation, $name, $extraLoca) {
+			if($idLocation && $name && $extraLoca) {
+				$this->idLocation = $this->bdDriver->escape_string($idLocation);
+				$this->$name = $this->bdDriver->escape_string($name);
+				$this->$extraLoca = $this->bdDriver->escape_string($extraLoca);
 
-			//true if success
-			return true;
+				$result = $this->bdDriver->query("UPDATE Location SET locationName = '" . $name . "', extraLocation = '" . $extraLoca . "' WHERE idLocation = " . $idLocation);
+
+				return $result;
+			}
+
+			return false;
 		}
 	}
 ?>
