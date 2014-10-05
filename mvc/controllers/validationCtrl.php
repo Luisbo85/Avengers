@@ -4,7 +4,7 @@ class ValidationCtrl{
 	/**
 	 * Validate a input a telephone number
 	 * @param int $telephone
-	 * @return int $telephone
+	 * @return mixed $telephone
 	 */
 	protected function validateTelephone($telephone){
    	 
@@ -19,7 +19,7 @@ class ValidationCtrl{
 	/**
 	 * Validate a input a number
 	 * @param int $data
-	 * @return int $data 
+	 * @return mixed $data 
 	 */
 	protected function validateNumber($data){
    	 	$regex = "/([0-9]+)$/";
@@ -33,7 +33,7 @@ class ValidationCtrl{
 	/**
 	 * Validate an input to be text-number
 	 * @param int $data
-	 * @return int $data 
+	 * @return mixed $data 
 	 */
 	protected function validateTextNumber($data){
    	 	$regex = "/([a-zA-Z0-9]+)$/";
@@ -48,7 +48,7 @@ class ValidationCtrl{
 	/**
 	 * Validate a input text
 	 * @param string $text
-	 * @return string $text
+	 * @return mixed $text
 	 **/
 	protected function validateText($text){
    	 	
@@ -62,7 +62,7 @@ class ValidationCtrl{
 	/**
 	 * Validate a input name
 	 * @param string $name
-	 * @return string $name
+	 * @return mixed $name
 	 */
 	protected function validateName($name){
    	
@@ -76,16 +76,20 @@ class ValidationCtrl{
 	/**
 	 * Validate a input password
 	 * @param string $password
-	 * @return string $password
+	 * @return mixed $password
 	 */
 	protected function validatePassword($password){
+		$regex="/^(\w|\d){8,10}$/";
+		if(!preg_match($regex, $password)){
+	   		$password=false;
+	   	}
 		return $password;
 	}
    
 	/**
 	 * Validate a input email
 	 * @param string $email
-	 * @return string $email
+	 * @return mixed $email
 	 */
 	protected function validateEmail($email){
    		
@@ -97,14 +101,23 @@ class ValidationCtrl{
 	}
    
 	/**
-	 * Validate a input email
+	 * Validate a input ID
 	 * @param int $ID
-	 * @return int $ID
+	 * @return mixed $ID
 	 */
 	protected function validateID($ID){
+		$regex="/^\d+$/";
+	   	if(!preg_match($regex,$ID)){
+	   		$ID=false;
+	   	}
 		return $ID;
 	}
 
+	/**
+	 * Validate a date have format year(4 numbers)-month(2 numbers)-day(2 numbers) hour(2 numbers):minutes(2 numbers):seconds(2 numbers)
+	 * @param string $data
+	 * @return mixed $data
+	 */
 	protected function validateDateTime($data){
    	 	
 		$regex="/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/";
@@ -112,6 +125,17 @@ class ValidationCtrl{
 	   		$data = false;
 	   	}
 	 	return $data;
+	}
+	
+	/**
+	 * Validate if a number is an integer or real number but without sign
+	 */
+	protected function validateRealNumber($real){
+		$regex="/^\d+(\.\d+)?$/";
+	   	if(!preg_match($regex,$real)){
+	   		$real=false;
+	   	}
+		return $real;
 	}
 }
 ?>

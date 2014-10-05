@@ -72,86 +72,6 @@
 			
 			return $InventoryInserted;
 		}
-		
-		/**
-		 * Change Vehicle´s Location
-		 * @param int $IDInventory
-		 * @param int $IDUser
-		 * @param string $Reason
-		 * @param string $name
-		 * @param string $extraLoca
-		 * @return boolean $Change
-		 */
-		function changeLocation($IDInventory,$IDUser,$Reason,$name,$extraLoca){
-		 	$Change=true;
-			
-			//Change Location in database
-			$this->IDUser=$IDUser;
-			$this->name=$name;
-			$this->extraLoca=$extraLoca;
-			return $Change;
-		 }
-		 
-		/**
-		 * Create a new inventory of exit
-		 * @param int $Mileage
-		 * @param float $AmountGasoline
-		 * @param string $Hit
-		 * @param string $Severity
-		 * @param int $IDUser
-		 * @param int $vin
-		 * @param string $Observations
-		 * @param string $name
-		 * @param string $extraLoca
-		 * @return boolean $Exit
-		 */
-		function exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations){
-			$Exit=FALSE;
-			//Conection with Database
-			$Mileage=$this->DbDriver->real_escape_string($Mileage);
-			$Gasoline=$this->DbDriver->real_escape_string($Gasoline);
-			$IDPiece=$this->DbDriver->real_escape_string($IDPiece);
-			$Severity=$this->DbDriver->real_escape_string($Severity);
-			$IDVehicle=$this->DbDriver->real_escape_string($IDVehicle);
-			$Observations=$this->DbDriver->real_escape_string($Observations);
-			if($stmt=$this->DbDriver->prepare("INSERT INTO Inventory (mileage,gasoline,idVehicle,observations,date,status) 
-		 								  	 			  VALUES (?,?,?,?,?,'EXIT')")){
-		 		$Hoy=date('Y-m-d H:i:s');
-				$stmt->bind_param('idiss',$Mileage,$Gasoline,$IDVehicle,$Observations,$Hoy);
-				if($stmt->execute()==TRUE){
-					if($stmt2=$this->DbDriver->prepare("INSERT INTO hit (idInventory,idPiece,Severity) 
-		 								  	 			  VALUES (?,?,?)")){
-		 				$LastID=$stmt->insert_id;
-		 				$stmt->close();
-		 				$stmt2->bind_param('iis',$LastID,$IDPiece,$Severity);
-						if($stmt2->execute()==TRUE){
-							$Exit=TRUE;
-						}
-						else{
-							$Exit=FALSE;
-						}
-						
-					}
-					else{
-						$stmt->close();
-						$Exit=FALSE;
-					}
-					$stmt2->close();
-				}
-				else{
-					$stmt->close();
-					$Exit=FALSE;
-				}
-				
-		 	}
-			
-			$this->Mileage=$Mileage;
-			$this->Gasoline=$Gasoline;
-			$this->IDVehicle=$IDVehicle;
-			$this->Observations=$Observations;
-			
-			return $Exit;
-		 }
 		 
 		/**
 		 *Getting information of an inventory 
@@ -188,5 +108,6 @@
 			}
 			return $Inventories;
 		}
+		
 	}
 ?>

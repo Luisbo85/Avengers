@@ -19,6 +19,10 @@
 		 *@param string $brand
 		 *@param string $type
 		 *@param int $model
+		 *@param int $idLocation
+		 *@param int $idUser
+		 *@param string $date
+		 *@param string $reason
 		 *@return true in success
 		 *Insert in database new vehicle
 		 */
@@ -106,5 +110,87 @@
 
 			return $result;
 		}
+		
+		/**
+		 * Change Vehicle´s Location
+		 * @param int $IDLocation
+		 * @param int $IDUser
+		 * @param int $IDVehicle
+		 * @param string $Reason
+		 * @return boolean $Change
+		 */
+		function changeLocation($IDLocation,$IDUser,$IDVehicle,$Reason){
+		 	$Change=FALSE;
+			$IDLocation=$this->bdDriver->real_escape_string($IDLocation);
+			$IDUser=$this->bdDriver->real_escape_string($IDUser);
+			$IDVehicle=$this->bdDriver->real_escape_string($IDVehicle);
+			$Reason=$this->bdDriver->real_escape_string($Reason);
+			if($stmt=$this->bdDriver->prepare("INSERT INTO vehicleLocation (idLocation,idUser,idVehicle,reason,date) 
+		 								  	 			  VALUES (?,?,?,?,?)")){
+		 		$Hoy=date('Y-m-d H:i:s');
+				$stmt->bind_param('iiiss',$IDLocation,$IDUser,$IDVehicle,$Reason,$Hoy);
+				if($stmt->execute()==TRUE){
+					$Change=TRUE;
+				}
+				else{
+					$Change=FALSE;
+				}
+				$stmt->close();
+		 	}
+			
+			return $Change;
+		 }
+		 
+		/**
+		 * Create a new inventory of exit
+		 * @param int $Mileage
+		 * @param float $Gasoline
+		 * @param int $IDPiece
+		 * @param string $Severity
+		 * @param int $IDVehice
+		 * @param string $Observations
+		 * @return boolean $Exit
+		 */
+		function exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations){
+			$Exit=FALSE;
+			//Conection with Database
+			$Mileage=$this->bdDriver->real_escape_string($Mileage);
+			$Gasoline=$this->bdDriver->real_escape_string($Gasoline);
+			$IDPiece=$this->bdDriver->real_escape_string($IDPiece);
+			$Severity=$this->bdDriver->real_escape_string($Severity);
+			$IDVehicle=$this->bdDriver->real_escape_string($IDVehicle);
+			$Observations=$this->bdDriver->real_escape_string($Observations);
+			if($stmt=$this->bdDriver->prepare("INSERT INTO Inventory (mileage,gasoline,idVehicle,observations,date,status) 
+		 								  	 			  VALUES (?,?,?,?,?,'EXIT')")){
+		 		$Hoy=date('Y-m-d H:i:s');
+				$stmt->bind_param('idiss',$Mileage,$Gasoline,$IDVehicle,$Observations,$Hoy);
+				if($stmt->execute()==TRUE){
+					if($stmt2=$this->bdDriver->prepare("INSERT INTO hit (idInventory,idPiece,Severity) 
+		 								  	 			  VALUES (?,?,?)")){
+		 				$LastID=$stmt->insert_id;
+		 				$stmt->close();
+		 				$stmt2->bind_param('iis',$LastID,$IDPiece,$Severity);
+						if($stmt2->execute()==TRUE){
+							$Exit=TRUE;
+						}
+						else{
+							$Exit=FALSE;
+						}
+					}
+					else{
+						$stmt->close();
+						$Exit=FALSE;
+					}
+					$stmt2->close();
+				}
+				else{
+					$stmt->close();
+					$Exit=FALSE;
+				}
+		 	}
+			
+			return $Exit;
+		 }
+		
 	}
 ?>

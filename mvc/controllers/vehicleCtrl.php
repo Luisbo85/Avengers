@@ -151,19 +151,43 @@
 		 * Change vehicle´s location 
 		 */
 		private function changeLocation(){
+			$Correct=TRUE;//Flag to determine if it can create a new Inventory
+			$NoSet=FALSE; //Flag to determine if the variables are set
 			//Validate variables and if variables is set 
-			$IDInventory=isset($_POST['IDInventory'])?$this->validateID($_POST['IDInventory']):0;
-			$IDUser=isset($_POST['IDUser'])?$this->validateID($_POST['IDUser']):0;
-			$Reason=isset($_POST['Reason'])?$this->validateText($_POST['Reason']):'';
-			//Information of new Location
-			$name = isset($_POST['name'])?$this->validateText($_POST['name']):'';
-			$extraLoca = isset($_POST['extraLocations'])?$this->validateText($_POST['extraLocations']):'';
+			$IDLocation=isset($_POST['IDLocation'])?$this->validateID($_POST['IDLocation']):$NoSet=TRUE;
+			$IDVehicle=isset($_POST['IDVehicle'])?$this->validateID($_POST['IDVehicle']):$NoSet=TRUE;
+			$IDUser=isset($_POST['IDUser'])?$this->validateID($_POST['IDUser']):$NoSet=TRUE;
+			$Reason=isset($_POST['Reason'])?$this->validateText($_POST['Reason']):$NoSet=TRUE;
 			
-			//Change vehicle´s location
-			$Result=$this->model->changeLocation($IDInventory,$IDUser,$Reason,$name,$extraLoca);
-			
-			if($Result){
-				require('views/inventoryChanged.php');
+			echo '*',$NoSet,'*','<br>';
+			if($NoSet==FALSE){
+				if($IDLocation==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($IDVehicle==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($IDUser==FALSE){
+					$Correct=FALSE;
+				}
+				elseif ($Reason==FALSE) {
+					$Correct=FALSE;
+				}
+				echo 'Correct=',$Correct,'*','<br>';
+				if($Correct==TRUE){
+					//Change vehicle´s location
+					$Result=$this->model->changeLocation($IDLocation,$IDUser,$IDVehicle,$Reason);
+					
+					if($Result==TRUE){
+						require('views/inventoryChanged.php');
+					}
+					else{
+						require('views/Error.php');
+					}
+				}
+				else{
+					require('views/Error.php');
+				}
 			}
 			else{
 				require('views/Error.php');
@@ -174,23 +198,32 @@
 		 * Create a new inventory but registering actual state and compare 
 		 */
 		private function exitVehicle(){
+			$Correct=TRUE;//Flag to determine if it can create a new Inventory
+			$NoSet=FALSE; //Flag to determine if the variables are set
 			//Validate variables and if variables is set 
-			$Mileage=isset($_POST['Mileage'])?$this->validateNumber($_POST['Mileage']):0;
-			$AmountGasoline=isset($_POST['AmountGasoline'])?$this->validateNumber($_POST['AmountGasoline']):0;
-			$Hit=isset($_POST['Hit'])?$this->validateText($_POST['Hit']):'';
-			$Severity=isset($_POST['Severity'])?$this->validateText($_POST['Severity']):'';
-			$IDUser=isset($_POST['IDUser'])?$this->validateID($_POST['IDUser']):0;
-			$vin=isset($_POST['vin'])?$this->validateNumber($_POST['vin']):0;
-			$Observations=isset($_POST['Observations'])?$this->validateText($_POST['Observations']):0;
-			//Information of Location
-			$name = isset($_POST['name'])?$this->validateText($_POST['name']):'';
-			$extraLoca = isset($_POST['extraLocations'])?$this->validateText($_POST['extraLocations']):'';
+			$Mileage=isset($_POST['Mileage'])?$this->validateNumber($_POST['Mileage']):$NoSet=TRUE;
+			$Gasoline=isset($_POST['Gasoline'])?$this->validateRealNumber($_POST['Gasoline']):$NoSet=TRUE;
+			$IDPiece=isset($_POST['IDPiece'])?$this->validateID($_POST['IDPiece']):$NoSet=TRUE;
+			$Severity=isset($_POST['Severity'])?$this->validateText($_POST['Severity']):$NoSet=TRUE;
+			$IDVehicle=isset($_POST['IDVehicle'])?$this->validateNumber($_POST['IDVehicle']):$NoSet=TRUE;
+			$Observations=isset($_POST['Observations'])?$this->validateText($_POST['Observations']):$NoSet=TRUE;
 			
-			//Insert a new Inventory but information of exit
-			$Result=$this->model->exitVehicle($Mileage,$AmountGasoline,$Hit,$Severity,$IDUser,$vin,$Observations,$name,$extraLoca);
-			
-			if($Result){
-				require('views/inventoryExit.php');
+			if($NoSet==FALSE){
+				
+				if($Correct==TRUE){
+					//Insert a new Inventory
+					$Result=$this->model->exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations);
+					
+					if($Result!=FALSE){
+						require('views/inventoryExit.php');
+					}
+					else{
+						require('views/Error.php');
+					}
+				}
+				else{
+					require('views/Error.php');
+				}
 			}
 			else{
 				require('views/Error.php');
