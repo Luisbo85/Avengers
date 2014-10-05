@@ -5,8 +5,8 @@
 		private $model;
 	  
 		function __construct(){
-	    	/*require('models/userMdl.php');
-	    	$this->model=new UserMdl();*/
+	    	require('models/userMdl.php');
+	    	$this->model=new UserMdl();
 		}
 	  
 		function run(){
@@ -37,51 +37,113 @@
 		}
 	
 		/**
-		 * Create a new user
+		 * Create a new user. Doing validation over input data
 		 */
 		private function create(){
+			$Correct=TRUE;//Flag to determine if it can create a new user
+			$NoSet=FALSE; //Flag to determine if the variables are set
 	  		//Validate variables and if variables is set 
-			$Name=isset($_POST['Name'])?$this->validateName($_POST['Name']):'';
-			$MaternalLastname=isset($_POST['MaternalLastname'])?$this->validateText($_POST['MaternalLastname']):'';
-			$PaternalLastname=isset($_POST['PaternalLastname'])?$this->validateText($_POST['PaternalLastname']):'';
-			$Email=isset($_POST['Email'])?$this->validateEmail($_POST['Email']):'';
-			$Job=isset($_POST['Job'])?$this->validateText($_POST['Job']):'';
-			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):'';
-			$Telephone=isset($_POST['Telephone'])?$this->validateTelephone($_POST['Telephone']):0;
+			$Name=isset($_POST['Name'])?$this->validateName($_POST['Name']):$NoSet=TRUE;
+			$MaternalLastname=isset($_POST['MaternalLastname'])?$this->validateName($_POST['MaternalLastname']):$NoSet=TRUE;
+			$PaternalLastname=isset($_POST['PaternalLastname'])?$this->validateName($_POST['PaternalLastname']):$NoSet=TRUE;
+			$Email=isset($_POST['Email'])?$this->validateEmail($_POST['Email']):$NoSet=TRUE;
+			$Job=isset($_POST['Job'])?$this->validateText($_POST['Job']):$NoSet=TRUE;
+			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):$NoSet=TRUE;
+			$Telephone=isset($_POST['Telephone'])?$this->validateTelephone($_POST['Telephone']):$NoSet=TRUE;
 			 
-			if($Name==false){
-				echo 'Error con ', $_POST['Name'],'<br/>';
-			}
-	  		if($Email==false){
-	  	 		echo 'Error con ', $_POST['Email'],'<br/>';
-			}
-			if($Telephone==false){
-				echo 'Error con ', $_POST['Telephone'],'<br/>';
-			}
-			//Insert the new User
-			$Result=$this->model->create($Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
-	     
-			if($Result){
-				//Shown a view
-				require('views/userInserted.php');
+			
+			if($NoSet==FALSE){
+				if($Name==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Pass==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($MaternalLastname==FALSE){
+					if($_POST['MaternalLastname']==''){
+						$MaternalLastname='';
+					}
+					else{
+						$Correct=FALSE;
+					}
+				}
+				if($PaternalLastname==FALSE){
+					if($_POST['PaternalLastname']==''){
+						$PaternalLastname='';
+					}
+					else{
+						$Correct=FALSE;
+					}
+				}
+				if($Email==FALSE){
+					if($_POST['Email']==''){
+						$Email='';
+					}
+					else{
+						$Correct=FALSE;
+					}
+				}
+				if($Job==FALSE){
+					if($_POST['Job']==''){
+						$Job='';
+					}
+					else{
+						$Correct=FALSE;
+					}
+				}
+				if($Telephone==FALSE){
+					if($_POST['Telephone']==''){
+						$Telephone='';
+					}
+					else{
+						$Correct=FALSE;
+					}
+				}
+				
+				//Insert the new User
+				if($Correct==TRUE){
+					
+					$Result=$this->model->create($Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);     
+					if($Result==TRUE){
+						//Shown a view
+						require('views/userInserted.php');
+					}
+					else{
+						require('views/Error.php');
+					}
+				}
+				else{
+					require('views/Error.php');
+				}
 			}
 			else{
 				require('views/Error.php');
 			}
 		}
+
 	  
 		/**
-		 * Delete a user  
+		 * Delete a user using his ID.
 		 */
 		private function delete(){
-			$ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):0;
-			$Result=$this->model->delete($ID);
-			 
-			if($Result){
-				require('views/userDeleted.php');
+			$NoSet=FALSE; //Flag to determine if the variables are set
+			$ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):$NoSet=TRUE;
+			if($NoSet==FALSE){
+				if($ID!=FALSE){
+					$Result=$this->model->delete($ID); 
+					if($Result){
+						require('views/userDeleted.php');
+					}
+					else{
+					 	require('views/Error.php');
+					}
+				}
+				else{
+					require('views/Error.php');
+				}
 			}
 			else{
-			 	require('views/Error.php');
+				require('views/Error.php');
 			}
 		}
 	   
@@ -89,39 +151,84 @@
 		 * Update different attributes of User
 		 */
 		private function update(){
-			//Validate variables and if variables is set 
-			$Name=isset($_POST['Name'])?$this->validateName($_POST['Name']):'';
-			$MaternalLastname=isset($_POST['MaternalLastname'])?$this->validateText($_POST['MaternalLastname']):'';
-			$PaternalLastname=isset($_POST['PaternalLastname'])?$this->validateText($_POST['PaternalLastname']):'';
-			$Email=isset($_POST['Email'])?$this->validateEmail($_POST['Email']):'';
-			$Job=isset($_POST['Job'])?$this->validateTex($_POST['Job']):'';
-			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):'';
+			$Correct=TRUE;//Flag to determine if it can update an user
+			$NoSet=FALSE; //Flag to determine if the variables are set
+	  		//Validate variables and if variables is set
+	  		$ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):$NoSet=TRUE; 
+			$Name=isset($_POST['Name'])?$this->validateName($_POST['Name']):$NoSet=TRUE;
+			$MaternalLastname=isset($_POST['MaternalLastname'])?$this->validateName($_POST['MaternalLastname']):$NoSet=TRUE;
+			$PaternalLastname=isset($_POST['PaternalLastname'])?$this->validateName($_POST['PaternalLastname']):$NoSet=TRUE;
+			$Email=isset($_POST['Email'])?$this->validateEmail($_POST['Email']):$NoSet=TRUE;
+			$Job=isset($_POST['Job'])?$this->validateText($_POST['Job']):$NoSet=TRUE;
+			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):$NoSet=TRUE;
+			$Telephone=isset($_POST['Telephone'])?$this->validateTelephone($_POST['Telephone']):$NoSet=TRUE;
 		  	
-		  	//Update information of an user
-			$Result=$this->model->update($Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Pass);
-		 
-		 	if($Result){
-		  		require('views/userModified.php');
-		  	}
+			if($NoSet==FALSE){
+				if($ID==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Name==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Pass==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($MaternalLastname==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($PaternalLastname==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Email==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Job==FALSE){
+					$Correct=FALSE;
+				}
+				elseif($Telephone==FALSE){
+					$Correct=FALSE;
+				}
+				//Insert the new User
+				if($Correct==TRUE){
+					
+					//Update information of an user
+					$Result=$this->model->update($ID,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
+		 			if($Result){
+		  				require('views/userModified.php');
+					}
+					else{
+						require('views/Error.php');
+					}
+				}
+				else{
+					require('views/Error.php');
+				}
+			}
 			else{
-		 		require('views/Error.php');
-		  	}
+				require('views/Error.php');
+			}
 		}
-	
-		/*
-		 * Show information about an user 
+		
+		
+		/**
+		 * Show information about an user
 		 */ 
 		private function select(){
 	    	//Validate variables and if variables is set 
-			$ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):0;
+			$ID=isset($_POST['ID'])?$this->validateID($_POST['ID']):FALSE;
 	    	//Show information of an user
-			$User=$this->model->select($ID);
-		 
-			if(is_array($User)){
-		  		require('views/userSelected.php');
+	    	if($ID==FALSE){
+				$User=$this->model->select($ID);
+			 
+				if(is_array($User)){
+			  		require('views/userSelected.php');
+				}
+			  	else{
+			 		require('views/Error.php');
+				}
 			}
-		  	else{
-		 		require('views/Error.php');
+			else{
+				require('views/Error.php');
 			}
 		}
 
@@ -137,6 +244,8 @@
 		 		require('views/Error.php');
 			}	
 		}
+		
+		
 	   
 	}
 ?>

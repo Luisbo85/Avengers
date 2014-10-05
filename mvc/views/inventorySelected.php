@@ -1,3 +1,4 @@
 <?php
-   echo 'Inventory Selected';
+   echo 'Inventory Selected','<br>';
+   var_dump($Inventory);
 ?>
