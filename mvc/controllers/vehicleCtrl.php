@@ -8,7 +8,7 @@
 		 */
 		function VehicleCtrl() {
 		 	require('models/vehicleMdl.php');
-		 	require('controllers/validationCtrl.php');
+		 	//require('controllers/validationCtrl.php');
 		 	$this->model = new VehicleMdl();
 		}
 	
@@ -21,6 +21,10 @@
 				case 'select':
 					//user is valid and have permission
 					$this->select();
+					break;
+				case 'selectAll':
+					//user is valid and have permission
+					$this->selectAll();
 					break;
 				case 'delete':
 					//user is valid and have permission
@@ -48,7 +52,7 @@
 		 */
 		private function delete() {
 			//validate variable
-			$idVehicle = isset($_POST['idVehicle']) ? validateNumber($_POST['idVehicle']) : '';
+			$idVehicle = isset($_POST['idVehicle']) ? $this->validateNumber($_POST['idVehicle']) : '';
 			//use model to delete
 			$result = $this->model->delete($idVehicle);
 	
@@ -66,13 +70,17 @@
 		 */
 		private function create() {
 			//validate variables, validar si esta seteado y que sea lo que queremos
-			$vin = isset($_POST['vin']) ? $this->validateNumber($_POST['vin']) : '';
-			$brand = isset($_POST['brand']) ? $this->validateNumber($_POST['brand']) : '';
-			$type = isset($_POST['type']) ? $this->validateNumber($_POST['type']) : '';
+			$vin = isset($_POST['vin']) ? $this->validateTextNumber($_POST['vin']) : '';
+			$brand = isset($_POST['brand']) ? $this->validateTextNumber($_POST['brand']) : '';
+			$type = isset($_POST['type']) ? $this->validateTextNumber($_POST['type']) : '';
 			$model = isset($_POST['model']) ? $this->validateNumber($_POST['model']) : '';
+			$idLocation = isset($_POST['idLocation']) ? $this->validateNumber($_POST['idLocation']) : '';
+			$idUser = isset($_POST['idUser']) ? $this->validateNumber($_POST['idUser']) : '';
+			$date = isset($_POST['date']) ? $this->validateDateTime($_POST['date']) : '';
+			$reason = isset($_POST['reason']) ? $this->validateTextNumber($_POST['reason']) : '';
 	
 			//use model to insert
-			$result = $this->model->create($vin, $brand, $type, $model);
+			$result = $this->model->create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason);
 	
 			//insert successful
 			if($result) {
@@ -88,10 +96,26 @@
 		 */
 		private function select() {
 			//validate variables
-			$idVehicle = isset($_POST['idVehicle']) ? validateNumber($_POST['idVehicle']) : '';
+			$idVehicle = isset($_POST['idVehicle']) ? $this->validateNumber($_POST['idVehicle']) : '';
 	
 			//use model to select
 			$result = $this->model->select($idVehicle);
+	
+			//select successful
+			if($result) {
+				//load the view
+				require('views/vehicleSelected.php');
+			} else {
+				require('views/Error.php');
+			}
+		}
+
+		/**
+		 *Gets a vehicle info
+		 */
+		private function selectAll() {
+			//use model to select
+			$result = $this->model->selectAll();
 	
 			//select successful
 			if($result) {
@@ -106,14 +130,13 @@
 		 *Updates a vehicle
 		 */
 		private function update() {
-			//validate variables, validar si esta seteado y que sea lo que queremos
-			$vin = isset($_POST['vin']) ? $this->validateNumber($_POST['vin']) : '';
-			$brand = isset($_POST['brand']) ? $this->validateNumber($_POST['brand']) : '';
-			$type = isset($_POST['type']) ? $this->validateNumber($_POST['type']) : '';
+			$idVehicle = isset($_POST['idVehicle']) ? $this->validateNumber($_POST['idVehicle']) : '';
+			$brand = isset($_POST['brand']) ? $this->validateTextNumber($_POST['brand']) : '';
+			$type = isset($_POST['type']) ? $this->validateTextNumber($_POST['type']) : '';
 			$model = isset($_POST['model']) ? $this->validateNumber($_POST['model']) : '';
 	
 			//use model to insert
-			$result = $this->model->update($vin, $brand, $type, $model);
+			$result = $this->model->update($idVehicle, $brand, $type, $model);
 	
 			//insert successful
 			if($result) {

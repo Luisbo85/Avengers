@@ -1,5 +1,4 @@
 <?php
-
 	//get query args
 	switch($_GET['ctrl']) {
 		case 'vehicle':

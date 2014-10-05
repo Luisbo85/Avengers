@@ -21,6 +21,10 @@
 					//user is valid and have permission
 					$this->select();
 					break;
+				case 'selectAll':
+					//user is valid and have permission
+					$this->selectAll();
+					break;
 				case 'delete':
 					//user is valid and have permission
 					$this->delete();
@@ -35,30 +39,11 @@
 		}
 
 		/**
-		 *@param string $data
-		 *@return string $data
-		 *Validate a string to be text and clean it
-		 */
-		function validateText($data) {
-			return $data;
-		}
-
-		/**
-		 *@param string $data
-		 *@return string $data
-		 *Validate a string to be a number and clean it
-		 */
-		function validateNumber($data) {
-			return $data;
-		}
-
-		/**
 		 *Inserts a new location
 		 */
 		private function create() {
-			//validate variables, validar si esta seteado y que sea lo que queremos
-			$name = $this->validateText($_POST['name']);
-			$extraLoca = $this->validateText($_POST['extraLocations']);
+			$name = isset($_POST['name']) ? $this->validateTextNumber($_POST['name']) : '';
+			$extraLoca = isset($_POST['extraLocations']) ? $this->validateTextNumber($_POST['extraLocations']) : '';
 			
 			//use model to insert
 			$result = $this->model->create($name, $extraLoca);
@@ -77,11 +62,26 @@
 		 */
 		private function select() {
 			//validate variables, validar si esta seteado y que sea lo que queremos
-			$name = $this->validateText($_POST['name']);
-			$extraLoca = $this->validateText($_POST['extraLocations']);
+			$idLocation = isset($_POST['idLocation']) ? $this->validateNumber($_POST['idLocation']) : '';
 			
-			//use model to select
-			$result = $this->model->select($name, $extraLoca);
+			//use model to delete
+			$result = $this->model->select($idLocation);
+
+			//select successful
+			if($result) {
+				//load the view
+				require('views/locationSelected.php');
+			} else {
+				require('views/Error.php');
+			}
+		}
+
+		/**
+		 *Gets all locations
+		 */
+		private function selectAll() {
+			//use model to delete
+			$result = $this->model->selectAll();
 
 			//select successful
 			if($result) {
@@ -97,11 +97,10 @@
 		 */
 		private function delete() {
 			//validate variables, validar si esta seteado y que sea lo que queremos
-			$name = $this->validateText($_POST['name']);
-			$extraLoca = $this->validateText($_POST['extraLocations']);
+			$idLocation = isset($_POST['idLocation']) ? $this->validateNumber($_POST['idLocation']) : '';
 			
 			//use model to delete
-			$result = $this->model->delete($name, $extraLoca);
+			$result = $this->model->delete($idLocation);
 
 			//delete successful
 			if($result) {
@@ -117,11 +116,12 @@
 		 */
 		private function update() {
 			//validate variables, validar si esta seteado y que sea lo que queremos
-			$name = $this->validateText($_POST['name']);
-			$extraLoca = $this->validateText($_POST['extraLocations']);
+			$idLocation = isset($_POST['idLocation']) ? $this->validateNumber($_POST['idLocation']) : '';
+			$name = isset($_POST['name']) ? $this->validateTextNumber($_POST['name']) : '';
+			$extraLoca = isset($_POST['extraLocations']) ? $this->validateTextNumber($_POST['extraLocations']) : '';
 			
 			//use model to updte
-			$result = $this->model->update($name, $extraLoca);
+			$result = $this->model->update($idLocation, $name, $extraLoca);
 
 			//update successful
 			if($result) {
