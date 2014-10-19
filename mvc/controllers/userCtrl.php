@@ -50,8 +50,7 @@
 			$Job=isset($_POST['Job'])?$this->validateText($_POST['Job']):$NoSet=TRUE;
 			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):$NoSet=TRUE;
 			$Telephone=isset($_POST['Telephone'])?$this->validateTelephone($_POST['Telephone']):$NoSet=TRUE;
-			 
-			
+
 			if($NoSet==FALSE){
 				if($Name==FALSE){
 					$Correct=FALSE;
@@ -107,6 +106,11 @@
 					if($Result==TRUE){
 						//Shown a view
 						require('views/userInserted.php');
+						require('mail.php');
+						$subject = 'Correo de registro de usuario';
+						$body = 'El usuario ' . $Name . ' ' . $MaternalLastname . ' ' . $PaternalLastname . ' se ha registrado correctamente';
+						$mail = new Email($Email, $subject, $body);
+						$mail->send();
 					}
 					else{
 						require('views/Error.php');
@@ -195,6 +199,14 @@
 					$Result=$this->model->update($ID,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
 		 			if($Result){
 		  				require('views/userModified.php');
+		  				require('mail.php');
+						$subject = 'Correo de actualizacion de datos usuario';
+						$body = 'Los datos del usuario ' . $Name . ' ' . $MaternalLastname . ' ' . $PaternalLastname . ' se han actualizado.';
+						$body = $body . ' Email: ' . $Email;
+						$body = $body . ' Job: ' . $Job;
+						$body = $body . ' Telefono: ' . $Telephone;
+						$mail = new Email($Email, $subject, $body);
+						$mail->send();
 					}
 					else{
 						require('views/Error.php');

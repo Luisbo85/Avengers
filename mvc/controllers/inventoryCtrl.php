@@ -49,6 +49,11 @@
 					
 					if($Result!=FALSE){
 						require('views/inventoryInserted.php');
+						require('mail.php');
+						$subject = 'Correo de registro de inventario';
+						$body = 'El inventario se registro exitosamente.';
+						$mail = new Email($Email, $subject, $body);
+						$mail->send();
 					}
 					else{
 						require('views/Error.php');
