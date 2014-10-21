@@ -1,27 +1,21 @@
 <?php
 
-	class UserMdl{
+	class UserMdl extends StandardMdl{
 		private $ID;
 		private $Name;
 		private $MaternalLastname;
 		private $PaternalLastname;
 		private $Email;
 		private $Job;
-		private $Pass;
 		private $Telephone;
-		private $DbDriver;
 	   
 		function __construct(){
-			require("models/databaseConfig.inc");
-			$this->DbDriver=new mysqli($host,$user,$pass,$bd);
-			if($this->DbDriver->connect_error){
-				die("No me pude conectar");
-			}
-			
+			parent::__construct();
 		}
 	   
 		/**
 		 * Create a new user in the Database
+		 * @param string $User
 		 * @param string $Name
 		 * @param string $MaternalLastname
 		 * @param string $PaternalLastname
@@ -30,16 +24,18 @@
 		 * @param string $Telephone
 		 * @return boolean $UserInserted
 		 */
-		function create($Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone){
+		function create($User,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone,$Pass){
+			$User=$this->DbDriver->real_escape_string($User);
 			$Name=$this->DbDriver->real_escape_string($Name);
 			$PaternalLastname=$this->DbDriver->real_escape_string($PaternalLastname);
 			$MaternalLastname=$this->DbDriver->real_escape_string($MaternalLastname);
 			$Email=$this->DbDriver->real_escape_string($Email);
 			$Job=$this->DbDriver->real_escape_string($Job);
 			$Telephone=$this->DbDriver->real_escape_string($Telephone);
-			if($stmt=$this->DbDriver->prepare("INSERT INTO User (name,maternalLastname,paternalLastname,email,job,telephone) 
-		 								  	 			  VALUES (?,?,?,?,?,?)")){
-				$stmt->bind_param('ssssss',$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
+			$Pass=$this->DbDriver->real_escape_string($Pass);
+			if($stmt=$this->DbDriver->prepare("INSERT INTO User (user,name,maternalLastname,paternalLastname,email,job,telephone,password) 
+		 								  	 			  VALUES (?,?,?,?,?,?,?,?)")){
+				$stmt->bind_param('ssssssss',$User,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone,$Pass);
 				if($stmt->execute()==TRUE){
 					$UserInserted=TRUE;
 				}
@@ -120,7 +116,7 @@
 		function select($ID){
 			$User=FALSE;
 			$ID=$this->DbDriver->real_escape_string($ID);
-			$Result=$this->DbDriver->query("SELECT * FROM user WHERE idUser=$ID");
+			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM user WHERE idUser=$ID");
 			if($Result!=FALSE){
 				$User=$Result->fetch_assoc();
 			}
@@ -133,12 +129,11 @@
 		 */
 		function listUsers(){
 			$Users=FALSE;
-			$Result=$this->DbDriver->query("SELECT * FROM user ");
+			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM user ");
 			if($Result!=FALSE){
-				$row=$Result->fetch_assoc();
-				while($row!=null){
-					$Users[]=$row;
-					$row=$Result->fetch_assoc();	
+				$Users=array();
+				while($row=$Result->fetch_assoc()){
+					$Users[]=$row;	
 				}
 			}
 			return $Users;

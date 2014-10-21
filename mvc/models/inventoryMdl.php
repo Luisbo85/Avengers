@@ -100,6 +100,7 @@
 			//Select all inventories from database
 			$Result=$this->DbDriver->query("SELECT * FROM inventory");
 			if($Result!=FALSE){
+				$Inventories=array();
 				$row=$Result->fetch_assoc();
 				while($row!=null){
 					$Inventories[]=$row;

@@ -1,11 +1,11 @@
 # Sobre el equipo
-**Equipo:** avengers
+**Equipo:** Avengers
 
 **Intergrantes:**
 	- Ramirez Mojica Francisco Javier
 	- Cortes Jarillo Luis Alberto
 
-**Link:** prow.site40.net
+**Link:** prow.vv.si
 
 # Sobre el proyecto
 ## Inventario vehicular e inspecciones

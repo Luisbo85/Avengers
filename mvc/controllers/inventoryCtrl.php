@@ -1,9 +1,10 @@
 <?php
 
-	class InventoryCtrl extends ValidationCtrl{
+	class InventoryCtrl extends StandardCtrl{
 		private $model;
 	  
 		function __construct(){
+			parent::__construct();
 	    	require('models/inventoryMdl.php');
 	    	$this->model=new InventoryMdl();
 		}
@@ -12,15 +13,45 @@
 			switch($_GET['act']){
 				case 'create':
 				  	//User is valid and have permissions
-				  	$this->create();
+				  	if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->create();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 				  	break;
 				case 'select':
 					//User is valid and have permissions
-					$this->select();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+							$this->select();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'list':
 					//User is valid and have permissions
-					$this->listInventories();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+							$this->listInventories();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				default:
 				  break;
@@ -49,7 +80,7 @@
 					
 					if($Result!=FALSE){
 						require('views/inventoryInserted.php');
-						require('mail.php');
+						require('controllers/mail.php');
 						$subject = 'Correo de registro de inventario';
 						$body = 'El inventario se registro exitosamente.';
 						$mail = new Email($Email, $subject, $body);

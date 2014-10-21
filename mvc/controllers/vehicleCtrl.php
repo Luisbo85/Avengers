@@ -1,5 +1,5 @@
 <?php
-	class VehicleCtrl extends ValidationCtrl{
+	class VehicleCtrl extends StandardCtrl{
 		private $model;
 		
 		/**
@@ -7,6 +7,7 @@
 		 *from user in query args
 		 */
 		function VehicleCtrl() {
+			parent::__construct();
 		 	require('models/vehicleMdl.php');
 		 	//require('controllers/validationCtrl.php');
 		 	$this->model = new VehicleMdl();
@@ -16,30 +17,100 @@
 			switch($_GET['act']) {
 				case 'create':
 					//user is valid and have permission
-					$this->create();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->create();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'select':
 					//user is valid and have permission
-					$this->select();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->select();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'selectAll':
 					//user is valid and have permission
-					$this->selectAll();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->selectAll();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'delete':
 					//user is valid and have permission
-					$this->delete();
+					if($this->isLogged()){
+		  				if($this->isManager()){
+		  					$this->delete();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'update':
 					//user is valid and have permission
-					$this->update();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->update();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'change':
 					//User is valid and have permissions
-					$this->changeLocation();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->changeLocation();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				case 'exit':
-					$this->exitVehicle();
+					if($this->isLogged()){
+		  				if($this->isManager() or $this->isUser()){
+		  					$this->exitVehicle();
+		  				}
+						else{
+							require('views/NoAccess.php');
+						}
+		  			}
+					else{
+						require('views/needLogin.php');
+					}
 					break;
 				default:
 					break;

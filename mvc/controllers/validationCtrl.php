@@ -129,6 +129,8 @@ class ValidationCtrl{
 	
 	/**
 	 * Validate if a number is an integer or real number but without sign
+	 * @param $string $real
+	 * @return mixed $real
 	 */
 	protected function validateRealNumber($real){
 		$regex="/^\d+(\.\d+)?$/";
@@ -136,6 +138,20 @@ class ValidationCtrl{
 	   		$real=false;
 	   	}
 		return $real;
+	}
+	
+	/**
+	 * Validate if a user name is correct
+	 * @param string $user
+	 * @param mixed $user
+	 */
+	protected function validateUserName($user)
+	{
+		$regex="/^(\w\d?)+$/";
+	   	if(!preg_match($regex,$user)){
+	   		$user=false;
+	   	}
+		return $user;
 	}
 }
 ?>
