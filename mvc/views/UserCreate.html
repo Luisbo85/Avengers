@@ -1,0 +1,25 @@
+		<h2>Llenas los datos</h2>
+		<form method="post" action="?ctrl=user&act=create">
+			<span>Puesto: </span><br>
+			<select name="job">
+				<option value="Manager">Manager</option>
+				<option value="User">User</option>
+			</select><br>
+			<label for="user">Usuario: </label><br>
+			<input type="text" id="user" name="user" required="required" placeholder="lucia32"/><br>
+			<label for="pass">Contraseña: </label><br>
+			<input type="password" id="pass" name="pass" required="required"/><br>
+			<label for="pass2">Confirma la Contraseña: </label><br>
+			<input type="password" id="pass2" name="pass2" required="required"/><br>
+			<label for="name">Nombre: </label><br>
+			<input type="text" id="name" name="name" required="required" placeholder="Lucia Anahí"/><br>
+			<label for="apellipaterno">Apellido Paterno: </label><br>
+			<input type="text" id="apellipaterno" name="apellipaterno" placeholder="Ramirez"/><br>
+			<label for="apellimaterno">Apellido Materno: </label><br>
+			<input type="text" id="apellimaterno" name="apellimaterno" placeholder="Jimenez"/><br>
+			<label for="email">Correo</label><br>
+			<input type="email" id="email" name="email" placeholder="lucy@gmail.com"/><br>
+			<label for="phone">Teléfono: </label><br>
+			<input type="tel" id="phone" name="phone" placeholder="11223344"/><br><br>
+			<button type="submit">Guardar</button>
+		</form>
