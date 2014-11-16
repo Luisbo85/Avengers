@@ -69,7 +69,20 @@
 		 *Selects all locations
 		 */
 		function selectAll() {
-			$result = $this->bdDriver->query("SELECT * FROM Location");
+			$result = $this->bdDriver->query("SELECT * FROM Location WHERE status = 1");
+			return $result;
+		}
+
+		/*
+		 *@return result set with all locations in DB
+		 *Selects all locations
+		 */
+		function selectAllVehicles($idLocation) {
+			$result = $this->bdDriver->query("SELECT VL.idVehicle AS idVehicle, locationName, extraLocation, vin, brand, type, date, reason
+				FROM VehicleLocation AS VL INNER JOIN
+					Vehicle as V on  VL.idVehicle = V.idVehicle INNER JOIN
+					Location  AS L ON VL.idLocation = L.idLocation
+				WHERE VL.idLocation  = " . $idLocation);
 			return $result;
 		}
 

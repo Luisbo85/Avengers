@@ -79,9 +79,6 @@
 									$filas = '';
 									foreach ($vehiculos as $row) {
 										$new_fila = $fila;
-										//$new_fila = str_replace('{codigo}', $row['id'], $new_fila);
-										//$new_fila = str_replace('{nombre}', $row['nombre'], $new_fila);
-										//Reemplazo con un diccionario
 										$diccionario = array(
 											'{id}' => $row['idVehicle'],
 											'{vin}' => $row['vin'], 
@@ -91,6 +88,17 @@
 										$new_fila = strtr($new_fila,$diccionario);
 										$filas .= $new_fila;
 									}
+
+									$alert = file_get_contents("./views/alert.html");
+									$diccionario = array(
+											'{type}' => 'alert-info',
+											'{title}' => '',
+											'{text}' => 'Da click al VIN para mas informacion del vehiculo.');
+									$alert = strtr($alert, $diccionario);
+
+									$diccionario = array(
+											'{alert}' => $alert);
+									$vista = strtr($vista,$diccionario);
 
 									$vista = str_replace($fila, $filas, $vista);
 
@@ -143,7 +151,76 @@
 						//user is valid and have permission
 						if($this->isLogged()){
 		  					if($this->isManager() or $this->isUser()){
-		  						$this->update();
+		  						if(!isset($_GET['id'])) {
+		  							$vista = file_get_contents("./views/vehicleList.html");
+		  							$resultQuery = $this->model->selectAll();
+
+									$vehiculos = array();
+									while($fila = $resultQuery->fetch_assoc()) {
+										$vehiculos[] = $fila;
+									}
+
+									$inicio_fila = strrpos($vista,'<tr>');
+									$final_fila = strrpos($vista,'</tr>') + 5;
+									$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+
+									$filas = '';
+									foreach ($vehiculos as $row) {
+										$new_fila = $fila;
+										$diccionario = array(
+											'{id}' => $row['idVehicle'],
+											'{vin}' => $row['vin'], 
+											'{brand}' => $row['brand'],
+											'{type}' => $row['type'], 
+											'{model}' => $row['model']);
+										$new_fila = strtr($new_fila,$diccionario);
+										$filas .= $new_fila;
+									}
+
+									$alert = file_get_contents("./views/alert.html");
+									$diccionario = array(
+											'{type}' => 'alert-info',
+											'{title}' => '',
+											'{text}' => 'Da click en Editar para actualizar la informacion del vehiculo.');
+									$alert = strtr($alert, $diccionario);
+
+									$diccionario = array(
+											'{alert}' => $alert);
+									$vista = strtr($vista,$diccionario);
+
+									$vista = str_replace($fila, $filas, $vista);
+
+									$data = array(
+										'page_title' => "Lista de vehiculos",
+										'general_content' => $vista
+									);
+		  							$this->createTemplate($data);
+		  						} else if(empty($_POST)) {
+		  							$vista = file_get_contents("./views/vehicleUpdate.html");
+		  							$resultQuery = $this->model->select($_GET['id']);
+
+		  							$vehiculo = array();
+									while($fila = $resultQuery->fetch_assoc()) {
+										$vehiculo[] = $fila;
+									}
+
+									$diccionario = array(
+										'{id}' => $_GET['id'],
+										'{vin}' => $vehiculo[0]['vin'], 
+										'{brand}' => $vehiculo[0]['brand'],
+										'{type}' => $vehiculo[0]['type'],
+										'{model}' => $vehiculo[0]['model']);
+
+									$vista = strtr($vista, $diccionario);
+
+		  							$data = array(
+										'page_title' => "Actualizar vehiculo",
+										'general_content' => $vista
+									);
+		  							$this->createTemplate($data);
+		  						} else {
+		  							$this->update();
+		  						}
 		  					}
 							else{
 								require('views/NoAccess.php');
@@ -198,14 +275,56 @@
 		 */
 		private function delete() {
 			//validate variable
-			$idVehicle = isset($_POST['idVehicle']) ? $this->validateNumber($_POST['idVehicle']) : '';
+			$idVehicle = isset($_GET['id']) ? $this->validateNumber($_GET['id']) : '';
 			//use model to delete
 			$result = $this->model->delete($idVehicle);
 	
 			//delete successful
 			if($result) {
-				//load the view
-				require('views/vehicleDeleted.php');
+				$vista = file_get_contents("./views/vehicleList.html");
+				$resultQuery = $this->model->selectAll();
+
+				$vehiculos = array();
+				while($fila = $resultQuery->fetch_assoc()) {
+					$vehiculos[] = $fila;
+				}
+
+				$inicio_fila = strrpos($vista,'<tr>');
+				$final_fila = strrpos($vista,'</tr>') + 5;
+				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+
+				$filas = '';
+				foreach ($vehiculos as $row) {
+					$new_fila = $fila;
+					$diccionario = array(
+						'{id}' => $row['idVehicle'],
+						'{vin}' => $row['vin'], 
+						'{brand}' => $row['brand'],
+						'{type}' => $row['type'], 
+						'{model}' => $row['model']);
+					$new_fila = strtr($new_fila,$diccionario);
+					$filas .= $new_fila;
+				}
+
+				$alert = file_get_contents("./views/alert.html");
+				$diccionario = array(
+						'{type}' => 'alert-success',
+						'{title}' => '¡Eliminado!',
+						'{text}' => 'El vehiculo se elimino exitosamente.');
+				$alert = strtr($alert, $diccionario);
+
+				$diccionario = array(
+						'{alert}' => $alert);
+				$vista = strtr($vista,$diccionario);
+
+				$vista = str_replace($fila, $filas, $vista);
+
+				$data = array(
+					'page_title' => "Lista de vehiculos",
+					'general_content' => $vista
+				);
+				$this->createTemplate($data);
+				//require('views/vehicleDeleted.php');
 			} else {
 				require('views/Error.php');
 			}
@@ -229,8 +348,49 @@
 			$result = $this->model->create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason);
 			//insert successful
 			if($result) {
-				//load the view
-				require('views/vehicleInserted.php');
+				$vista = file_get_contents("./views/vehicleList.html");
+				$resultQuery = $this->model->selectAll();
+
+				$vehiculos = array();
+				while($fila = $resultQuery->fetch_assoc()) {
+					$vehiculos[] = $fila;
+				}
+
+				$inicio_fila = strrpos($vista,'<tr>');
+				$final_fila = strrpos($vista,'</tr>') + 5;
+				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+
+				$filas = '';
+				foreach ($vehiculos as $row) {
+					$new_fila = $fila;
+					$diccionario = array(
+						'{id}' => $row['idVehicle'],
+						'{vin}' => $row['vin'], 
+						'{brand}' => $row['brand'],
+						'{type}' => $row['type'], 
+						'{model}' => $row['model']);
+					$new_fila = strtr($new_fila,$diccionario);
+					$filas .= $new_fila;
+				}
+				$vista = str_replace($fila, $filas, $vista);
+
+				$alert = file_get_contents("./views/alert.html");
+				$diccionario = array(
+						'{type}' => 'alert-success',
+						'{title}' => '¡Insertado!',
+						'{text}' => 'Vehiculo insertado exitosamente.');
+				$alert = strtr($alert, $diccionario);
+
+				$diccionario = array(
+						'{alert}' => $alert);
+				$vista = strtr($vista,$diccionario);
+
+				$data = array(
+					'page_title' => "Lista de vehiculos",
+					'general_content' => $vista
+				);
+				$this->createTemplate($data);
+				//require('views/vehicleInserted.php');
 			} else {
 				require('views/Error.php');
 			}
@@ -255,11 +415,21 @@
 					$vehiculos[] = $fila;
 				}
 
+				$result = $this->model->selectVL($_GET['id']);
+				$ubucacion = array();
+				while($fila = $result->fetch_assoc()) {
+					$ubucacion[] = $fila;
+				}
+
 				$diccionario = array(
 					'{vin}' => $vehiculos[0]['vin'], 
 					'{brand}' => $vehiculos[0]['brand'],
 					'{type}' => $vehiculos[0]['type'], 
-					'{model}' => $vehiculos[0]['model']);
+					'{model}' => $vehiculos[0]['model'],
+					'{usuario}' => $ubucacion[0]['user'],
+					'{ubicacion}' => $ubucacion[0]['locationName'] . $ubucacion[0]['extraLocation'],
+					'{fecha}' => substr($ubucacion[0]['date'], 0, 10),
+					'{razon}' => $ubucacion[0]['reason']);
 
 				$vista = strtr($vista, $diccionario);
 				$data = array(
@@ -292,7 +462,7 @@
 		 *Updates a vehicle
 		 */
 		private function update() {
-			$idVehicle = isset($_POST['idVehicle']) ? $this->validateNumber($_POST['idVehicle']) : '';
+			$idVehicle = isset($_GET['id']) ? $this->validateNumber($_GET['id']) : '';
 			$brand = isset($_POST['brand']) ? $this->validateTextNumber($_POST['brand']) : '';
 			$type = isset($_POST['type']) ? $this->validateTextNumber($_POST['type']) : '';
 			$model = isset($_POST['model']) ? $this->validateNumber($_POST['model']) : '';
@@ -302,8 +472,49 @@
 	
 			//insert successful
 			if($result) {
-				//load the view
-				require('views/vehicleUpdated.php');
+				$vista = file_get_contents("./views/vehicleList.html");
+				$resultQuery = $this->model->selectAll();
+
+				$vehiculos = array();
+				while($fila = $resultQuery->fetch_assoc()) {
+					$vehiculos[] = $fila;
+				}
+
+				$inicio_fila = strrpos($vista,'<tr>');
+				$final_fila = strrpos($vista,'</tr>') + 5;
+				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+
+				$filas = '';
+				foreach ($vehiculos as $row) {
+					$new_fila = $fila;
+					$diccionario = array(
+						'{id}' => $row['idVehicle'],
+						'{vin}' => $row['vin'], 
+						'{brand}' => $row['brand'],
+						'{type}' => $row['type'], 
+						'{model}' => $row['model']);
+					$new_fila = strtr($new_fila,$diccionario);
+					$filas .= $new_fila;
+				}
+				$vista = str_replace($fila, $filas, $vista);
+
+				$alert = file_get_contents("./views/alert.html");
+				$diccionario = array(
+						'{type}' => 'alert-success',
+						'{title}' => '¡Actualizado!',
+						'{text}' => 'Vehiculo actualizado exitosamente.');
+				$alert = strtr($alert, $diccionario);
+
+				$diccionario = array(
+						'{alert}' => $alert);
+				$vista = strtr($vista,$diccionario);
+
+				$data = array(
+					'page_title' => "Lista de vehiculos",
+					'general_content' => $vista
+				);
+				$this->createTemplate($data);
+				//require('views/vehicleUpdated.php');
 			} else {
 				require('views/Error.php');
 			}

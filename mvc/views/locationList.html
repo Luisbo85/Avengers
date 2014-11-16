@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="./index.php?ctrl=location&act=create">Insertar ubicacion</a></li>
+        <li><a href="./index.php?ctrl=location&act=select">Informacion de ubicacion</a></li>
+        <li class="active"><a href="">Lista de ubicaciones<span class="sr-only">(current)</span></a></li>
+        <li><a href="./index.php?ctrl=location&act=update">Actualizar ubicacion</a></li> 
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Seccion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <a href="./index.php?ctrl=location&act=select&id={id}">{name}</a>
+        </td>
+        <td>
+          {seccion}
+        </td>
+        <td>
+          <a href="./index.php?ctrl=location&act=update&id={id}">Editar</a>
+        </td>
+        <td>
+          <a href="./index.php?ctrl=location&act=delete&id={id}">Eliminar</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  {alert}
+</div>

@@ -40,6 +40,8 @@
 
 					$result = $this->bdDriver->query("INSERT INTO VehicleLocation(idVehicle, idLocation, idUser, date, reason) VALUES(" . $idVehicle .", " . $idLocation .", " .  $idUser .", '" .  $date . "', '" . $reason . "')");
 				}
+
+				$result = $this->bdDriver->insert_id;
 				return $result;
 			}
 
@@ -106,9 +108,31 @@
 		 *Gets a vehicle data
 		 */
 		function selectAll() {
-			$result = $this->bdDriver->query("SELECT * FROM Vehicle");
+			$result = $this->bdDriver->query("SELECT * FROM Vehicle WHERE status = 1");
 
 			return $result;
+		}
+
+		/**
+		 *@return returns vahicle location info
+		 *Gets a vehicle data
+		 */
+		function selectVL($idVehicle) {
+			if($idVehicle) {
+				$result = $this->bdDriver->query("SELECT 
+						locationName, extraLocation, user, VL.date AS date, VL.reason AS reason
+					    FROM
+					        VehicleLocation as VL
+					            INNER JOIN
+					        Vehicle as V ON VL.idVehicle = V.idVehicle
+					            INNER JOIN
+					        Location as L ON VL.idLocation = VL.idLocation
+					            INNER JOIN
+					        User as U ON VL.idUser = U.idUser
+					        WHERE VL.idVehicle = " . $this->$idVehicle);
+				return $result;
+			}
+			return false;
 		}
 		
 		/**
