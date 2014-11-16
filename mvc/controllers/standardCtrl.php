@@ -82,6 +82,18 @@
 			}
 			return FALSE;
 		}
-		
+
+		function createTemplate($data){
+			$header = file_get_contents('./views/cabecera.html');
+			$footer = file_get_contents('./views/pie.html');			
+				
+			$dictionary = array(
+				'{page_title}' => $data['page_title'],
+				);
+
+			$view = $header . $data['general_content'] . $footer;
+			$view = strtr($view, $dictionary);
+			echo $view;
+		}
 	}
 ?>

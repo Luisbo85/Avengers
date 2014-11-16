@@ -120,7 +120,7 @@ class ValidationCtrl{
 	 */
 	protected function validateDateTime($data){
    	 	
-		$regex="/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/";
+		$regex="/(\d{4})-(\d{1,2})-(\d{1,2})/";
 		if(!preg_match($regex, $data)){
 	   		$data = false;
 	   	}
