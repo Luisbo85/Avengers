@@ -1,0 +1,21 @@
+		<h2>Eliminar Usuarios</h2>
+		<form method="post" action="?ctrl=user&act=delete">
+			<span>Busqueda: </span><br>
+			<select name="filter">
+				<option value="id">ID</option>
+				<option value="name">Nombre</option>
+				<option value="lastname">Apellidos</option>
+				<option value="job">Puesto</option>
+			</select><br>
+			<label for="id">ID: </label><br>
+			<input type="number" id="id" name="id" required="required" placeholder="5" min="1" step="1"/><br>
+			<label for="name">Nombre: </label><br>
+			<input type="text" id="name" name="name" required="required" placeholder="Lucia"/><br>
+			<label for="apellipaterno">Apellido Paterno: </label><br>
+			<input type="text" id="apellipaterno" name="apellipaterno" required="required" placeholder="Ramirez"/><br>
+			<label for="apellimaterno">Apellido Materno: </label><br>
+			<input type="text" id="apellimaterno" name="apellimaterno" required="required" placeholder="Jimenez"/><br>
+			<select name="job">
+				<option value="User">User</option>
+			</select><br>
+		</form>
