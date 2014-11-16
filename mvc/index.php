@@ -1,6 +1,14 @@
 <?php
-	//get query args
+	error_reporting(E_ALL);
+	ini_set('display_errors', '1');
+
 	session_start();
+
+	$_SESSION['IDuser'] = '1';
+	$_SESSION['job'] = 'Manager';
+	$_SESSION['user'] = 'root';
+	$_SESSION['status'] = '1';
+
 	if(isset($_GET['ctrl'])){
 		require('controllers/validationCtrl.php');
 		require('controllers/standardCtrl.php');
