@@ -36,3 +36,4 @@ Cada uno de estos puede o no tener además ubicaciones en forma de tablero, ejem
 * El patron de arquitectura modelo–vista–controlador (MVC)
 * php
 * mysql
+* Bootstrap
