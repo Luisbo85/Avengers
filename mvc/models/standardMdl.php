@@ -20,10 +20,10 @@
 		function login($User,$Pass){
 			$Logged=null;
 			$User=$this->DbDriver->real_escape_string($User);
-			$Result=$this->DbDriver->query("SELECT idUser,password,job,status FROM user WHERE user='$User'");
+			$Result=$this->DbDriver->query("SELECT idUser,password,job,status FROM User WHERE user='$User'");
 			if($Result!=FALSE){
 				$Logged=$Result->fetch_assoc();
-				if(strcmp($Pass, $Logged['password'])!=0){
+				if(strcmp($Pass, $Logged['password'])!=0 or $Logged['status']==0){
 					$Logged=FALSE;
 				}
 			}

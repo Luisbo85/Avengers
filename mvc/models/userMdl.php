@@ -62,10 +62,15 @@
 			$Deleted=FALSE;
 			$ID=$this->DbDriver->real_escape_string($ID);
 			//Search in the Database and delete if it found it
-			if($stmt=$this->DbDriver->prepare("UPDATE user SET status=0 WHERE idUser=?")){
+			if($stmt=$this->DbDriver->prepare("UPDATE User SET status=0 WHERE idUser=?")){
 				$stmt->bind_param('i',$ID);
-				if($stmt->execute()==TRUE and $stmt->affected_rows>0){
-					$Deleted=TRUE;
+				if($stmt->execute()==TRUE){
+					if($stmt->affected_rows>0){
+						$Deleted=TRUE;
+					}
+					else{
+						$Deleted='D';
+					}
 				}
 				$stmt->close();
 		 	}
@@ -87,7 +92,7 @@
 			$Job=$this->DbDriver->real_escape_string($Job);
 			$Telephone=$this->DbDriver->real_escape_string($Telephone);
 			//Update in the Database
-			if($stmt=$this->DbDriver->prepare("UPDATE user SET name=?,
+			if($stmt=$this->DbDriver->prepare("UPDATE User SET name=?,
 																paternalLastname=?,
 																maternalLastname=?,
 																email=?,
@@ -116,7 +121,7 @@
 		function select($ID){
 			$User=FALSE;
 			$ID=$this->DbDriver->real_escape_string($ID);
-			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM user WHERE idUser=$ID");
+			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM User WHERE idUser=$ID");
 			if($Result!=FALSE){
 				$User=$Result->fetch_assoc();
 			}
@@ -129,7 +134,7 @@
 		 */
 		function listUsers(){
 			$Users=FALSE;
-			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM user ");
+			$Result=$this->DbDriver->query("SELECT idUser,user,name,paternalLastname,maternalLastname,email,job,telephone,status FROM User ");
 			if($Result!=FALSE){
 				$Users=array();
 				while($row=$Result->fetch_assoc()){

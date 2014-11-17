@@ -10,51 +10,60 @@
 		}
 	  
 		function run(){
-			switch($_GET['act']){
-				case 'create':
-				  	//User is valid and have permissions
-				  	if($this->isLogged()){
-		  				if($this->isManager() or $this->isUser()){
-		  					$this->create();
-		  				}
+			if(isset($_GET['act'])){
+				switch($_GET['act']){
+					case 'create':
+					  	//User is valid and have permissions
+					  	if($this->isLogged()){
+			  				if($this->isManager() or $this->isUser()){
+			  					$this->create();
+			  				}
+							else{
+								require('views/NoAccess.php');
+							}
+			  			}
 						else{
-							require('views/NoAccess.php');
+							require('views/needLogin.php');
 						}
-		  			}
-					else{
-						require('views/needLogin.php');
-					}
-				  	break;
-				case 'select':
-					//User is valid and have permissions
-					if($this->isLogged()){
-		  				if($this->isManager() or $this->isUser()){
-							$this->select();
-		  				}
+					  	break;
+					case 'select':
+						//User is valid and have permissions
+						if($this->isLogged()){
+			  				if($this->isManager() or $this->isUser()){
+								$this->select();
+			  				}
+							else{
+								require('views/NoAccess.php');
+							}
+			  			}
 						else{
-							require('views/NoAccess.php');
+							require('views/needLogin.php');
 						}
-		  			}
-					else{
-						require('views/needLogin.php');
-					}
-					break;
-				case 'list':
-					//User is valid and have permissions
-					if($this->isLogged()){
-		  				if($this->isManager() or $this->isUser()){
-							$this->listInventories();
-		  				}
+						break;
+					case 'list':
+						//User is valid and have permissions
+						if($this->isLogged()){
+			  				if($this->isManager() or $this->isUser()){
+								$this->listInventories();
+			  				}
+							else{
+								require('views/NoAccess.php');
+							}
+			  			}
 						else{
-							require('views/NoAccess.php');
+							require('views/needLogin.php');
 						}
-		  			}
-					else{
-						require('views/needLogin.php');
-					}
-					break;
-				default:
-				  break;
+						break;
+					default:
+					  break;
+				}
+			}
+			else{
+				$data = array(
+					'page_title' => "Inventario",
+					'general_content' => file_get_contents("views/inventoryMenu.html")
+				);
+				$this->createTemplate($data);
 			}
 		}
 	  

@@ -1,10 +1,29 @@
-		<h2>Ingrese su usario y contraseña</h2>
-		<form method="post" action="#">
-			<label for="user">Usuario:</label>
-			<input type="text" id="user" name="user"/>
-			<br>
-			<label for="pass">Contraseña:</label>
-			<input type="password" id="pass" name="pass"/>
-			<br>
-			<button type="submit">Enviar</button>
-		</form>
+      <div class="container-fluid">
+        <div class="col-sm-12 col-sm-offset-3 col-md-10 col-md-offset-1 main">
+          <h2 class="page-header">Ingrese su usuario y contraseña</h2>
+          <div class="row placeholders">
+            <form class="form-horizontal" role="form" method="post" action="?ctrl=user&act=login">
+
+		      <div class="form-group">
+		        <label for="user" class="col-sm-2 control-label">Usuario</label>
+		        <div class="col-sm-10">
+		          <input type="text" class="form-control" id="user" name="user" placeholder="lucia32" required="required">
+		        </div>
+		      </div>
+		
+		      <div class="form-group">
+		        <label for="pass" class="col-sm-2 control-label">Contraseña</label>
+		        <div class="col-sm-10">
+		          <input type="password" class="form-control" id="pass" name="pass" required="required">
+		        </div>
+		      </div>
+		      
+		      <div class="form-group">
+		        <div class="col-sm-offset-2 col-sm-10">
+		          <button type="submit" class="btn btn-default">Enviar</button>
+		        </div>
+		      </div>
+            </form>
+          </div>
+        </div>
+      </div>

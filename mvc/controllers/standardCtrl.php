@@ -36,7 +36,7 @@
 			$Logged=FALSE;
 			$NoSet=FALSE;
 			$User=isset($_POST['user'])?$this->validateUserName($_POST['user']):$NoSet=TRUE;
-			$Pass=isset($_POST['Password'])?$this->validatePassword($_POST['Password']):$NoSet=TRUE;
+			$Pass=isset($_POST['pass'])?$this->validatePassword($_POST['pass']):$NoSet=TRUE;
 			if($NoSet==FALSE){
 				if($User!=FALSE and $Pass!=FALSE){
 					$result=$this->standardMdl->login($User,$Pass);
@@ -44,22 +44,19 @@
 						$_SESSION['IDuser']=$result['idUser'];
 						$_SESSION['job']=$result['job'];
 						$_SESSION['user']=$User;
-						$_SESSION['status']=$result['status']; 
-						//$_SESSION['user']='pedro';
+						$_SESSION['status']=$result['status'];
 						$Logged=TRUE;
 					}
 					else{
-					//	require('views/Error.php');
+						require('views/Error.php');
 					}
 				}
 				else{
-					//require('views/Error.php');
-					echo 'Contraseña:',"$Pass",' o Usuarion:',"$User";
+					require('views/Error.php');
 				}
 			}
 			else {
-				//require('views/Error.php');
-				echo 'No set';
+				require('views/Error.php');
 			}
 			return $Logged;
 		}
@@ -70,14 +67,14 @@
 		 * @return boolean
 		 */
 		function isManager(){
-			if(isset($_SESSION['job']) and $_SESSION['job']=='Manager'){
+			if(isset($_SESSION['job']) and strcasecmp($_SESSION['job'],'Manager')==0){
 				return TRUE;
 			}
 			return FALSE;
 		}
 		
 		function isUser(){
-			if(isset($_SESSION['job']) and $_SESSION['job']=='User'){
+			if(isset($_SESSION['job']) and strcasecmp($_SESSION['job'],'User')==0){
 				return TRUE;
 			}
 			return FALSE;
@@ -94,6 +91,10 @@
 			$view = $header . $data['general_content'] . $footer;
 			$view = strtr($view, $dictionary);
 			echo $view;
+		}
+
+		function goHome(){
+			header('Location: ./');
 		}
 	}
 ?>
