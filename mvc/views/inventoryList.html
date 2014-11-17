@@ -1,0 +1,52 @@
+     <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-3 col-md-2 sidebar">
+	        <ul class="nav nav-sidebar">
+	          <li><a href="?ctrl=inventory&act=create">Insertar Inventario</a></li>
+	          <li><a href="?ctrl=inventory&act=update">Modificar Inventario</a></li>
+	          <li class="active"><a href="">Listado de Inventarios<span class="sr-only">(current)</span></a></li>
+	        </ul>
+		  </div>
+        </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      	<h2 class="page-header">Listado de Inventarios</h2>
+      	{alert}
+        <table class="table table-striped table-hover">		
+          <thead>
+			<tr>
+				<th>ID</th>
+				<th>Estatus</th>
+				<th>Kilometraje</th>
+				<th>Gasolina</th>
+				<th>Vehiculo</th>
+				<th>Fecha</th>
+			</tr>
+          </thead>
+		  <tbody>
+			<tr>
+				<td>
+					{id}
+				</td>
+				<td>
+					{status}
+				</td>
+				<td>
+					{mileage}
+				</td>
+				<td>
+					{gasoline}
+				</td>
+				<td>
+					{vehicle}
+				</td>
+				<td>
+					{date}
+				</td>
+				<td>
+					<a href="?ctrl=user&act=update&id={id}">Modificar</a>
+				</td>
+			</tr>
+          </tbody>
+		</table>
+      </div>
+     </div>

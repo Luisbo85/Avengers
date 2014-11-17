@@ -417,7 +417,7 @@
 						'{id}' => $row['idUser'], 
 						'{user}' => $row['user'],
 						'{job1}' => $row['job'],
-						'{job2}' => strcasecmp($row['job'],'Manager')?'User':'Manager',
+						'{job2}' => strcasecmp($row['job'],'Manager')==0?'User':'Manager',
 						'{name}' => $row['name'],
 						'{apellipaterno}' => $row['paternalLastname'],
 						'{apellimaterno}' => $row['maternalLastname'],
@@ -434,41 +434,41 @@
 					$Correct=TRUE;//Flag to determine if it can update an user
 					$NoSet=FALSE; //Flag to determine if the variables are set
 			  		//Validate variables and if variables is set
+			  		$ID=isset($_GET['id'])?$this->validateID($_GET['id']):$NoSet=TRUE;
 			  		$User=isset($_POST['user'])?$this->validateUserName($_POST['user']):$NoSet=TRUE;
 					$Name=isset($_POST['name'])?$this->validateName($_POST['name']):$NoSet=TRUE;
 					$MaternalLastname=isset($_POST['apellimaterno'])?$this->validateName($_POST['apellimaterno']):$NoSet=TRUE;
 					$PaternalLastname=isset($_POST['apellipaterno'])?$this->validateName($_POST['apellipaterno']):$NoSet=TRUE;
 					$Email=isset($_POST['email'])?$this->validateEmail($_POST['email']):$NoSet=TRUE;
 					$Job=isset($_POST['job'])?$this->validateText($_POST['job']):$NoSet=TRUE;
-					$Pass=isset($_POST['pass'])?$this->validatePassword($_POST['pass']):$NoSet=TRUE;
-					$Pass2=isset($_POST['pass2'])?$this->validatePassword($_POST['pass2']):$NoSet=TRUE;
 					$Telephone=isset($_POST['phone'])?$this->validateTelephone($_POST['phone']):$NoSet=TRUE;
 				  	
+					if(!isset($_POST['user']) or $User==FALSE){
+						$Correct=FALSE;
+					}
+					
+					if($ID==FALSE){
+						$Correct=FALSE;
+					}
+					if($Name==FALSE){
+						$Name='';
+					}
+					if($MaternalLastname==FALSE){
+						$MaternalLastname='';
+					}
+					if($PaternalLastname==FALSE){
+						$PaternalLastname='';
+					}
+					if($Email==FALSE){
+						$Email='';
+					}
+					if($Job==FALSE){
+						$Job='User';
+					}
+					if($Telephone==FALSE){
+						$Telephone='';
+					}
 					if($NoSet==FALSE){
-						if($ID==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($Name==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($Pass==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($MaternalLastname==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($PaternalLastname==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($Email==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($Job==FALSE){
-							$Correct=FALSE;
-						}
-						elseif($Telephone==FALSE){
-							$Correct=FALSE;
-						}
 						//Insert the new User
 						if($Correct==TRUE){
 							
@@ -484,6 +484,46 @@
 								$body = $body . ' Telefono: ' . $Telephone;
 								$mail = new Email($Email, $subject, $body);
 								$mail->send();
+								
+								$Users=$this->listUsers();
+							
+								$vista = file_get_contents("./views/userList.html");
+								$inicio_fila = strrpos($vista,'<tr>');
+								$final_fila = strrpos($vista,'</tr>') + 5;
+								$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+								$filas="";
+								foreach ($Users as $row) {
+									$new_fila = $fila;
+									$diccionario = array(
+										'{id}' => $row['idUser'], 
+										'{status}' => $row['status']?'Activo':'Inactivo',
+										'{user}' => $row['user'],
+										'{job}' => $row['job'],
+										'{name}' => $row['name'],
+										'{paternalLastname}' => $row['paternalLastname'],
+										'{maternalLastname}' => $row['maternalLastname'],
+										'{email}' => $row['email'],
+										'{phone}' => $row['telephone']
+										);
+									$new_fila = strtr($new_fila,$diccionario);
+									$filas .= $new_fila;
+								}
+								
+								$alert = file_get_contents("./views/alert.html");
+								$diccionario = array(
+										'{type}' => 'alert-success',
+										'{title}' => '¡Modificado!',
+										'{text}' => 'El usuario se modifico exitosamente.');
+								$alert = strtr($alert, $diccionario);
+				
+								$diccionario = array(
+										'{alert}' => $alert);
+								$vista = strtr($vista,$diccionario);
+				
+								$vista = str_replace($fila, $filas, $vista);
+								$data['page_title']='Lista de Usuarios'; 
+								$data['general_content']=$vista;
+								$this->createTemplate($data);
 							}
 							else{
 								require('views/Error.php');
