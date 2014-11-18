@@ -422,6 +422,7 @@
 				}
 
 				$diccionario = array(
+					'{id}' => $_GET['id'],
 					'{vin}' => $vehiculos[0]['vin'], 
 					'{brand}' => $vehiculos[0]['brand'],
 					'{type}' => $vehiculos[0]['type'], 
@@ -524,46 +525,120 @@
 		 * Change vehicle´s location 
 		 */
 		private function changeLocation(){
-			$Correct=TRUE;//Flag to determine if it can create a new Inventory
-			$NoSet=FALSE; //Flag to determine if the variables are set
-			//Validate variables and if variables is set 
-			$IDLocation=isset($_POST['IDLocation'])?$this->validateID($_POST['IDLocation']):$NoSet=TRUE;
-			$IDVehicle=isset($_POST['IDVehicle'])?$this->validateID($_POST['IDVehicle']):$NoSet=TRUE;
-			$IDUser=isset($_POST['IDUser'])?$this->validateID($_POST['IDUser']):$NoSet=TRUE;
-			$Reason=isset($_POST['Reason'])?$this->validateText($_POST['Reason']):$NoSet=TRUE;
-			
-			echo '*',$NoSet,'*','<br>';
-			if($NoSet==FALSE){
-				if($IDLocation==FALSE){
-					$Correct=FALSE;
+			if(empty($_POST)){
+				require_once('models/locationMdl.php');
+				$locationMdl = new LocationMdl();
+				$resultQuery  = $locationMdl->selectAll();
+				$vehicle = $this->model->select($_GET['id']);
+				$vehicle = $vehicle->fetch_assoc();
+				$location = $this->model->selectVL($_GET['id']);
+				$location = $location->fetch_assoc();
+				$ubicaciones = array();
+				while($fila = $resultQuery->fetch_assoc()) {
+					$ubicaciones[] = $fila;
 				}
-				elseif($IDVehicle==FALSE){
-					$Correct=FALSE;
-				}
-				elseif($IDUser==FALSE){
-					$Correct=FALSE;
-				}
-				elseif ($Reason==FALSE) {
-					$Correct=FALSE;
-				}
-				echo 'Correct=',$Correct,'*','<br>';
-				if($Correct==TRUE){
-					//Change vehicle´s location
-					$Result=$this->model->changeLocation($IDLocation,$IDUser,$IDVehicle,$Reason);
-					
-					if($Result==TRUE){
-						require('views/inventoryChanged.php');
+
+				$filas = '';
+				foreach ($ubicaciones as $row) {
+					$labelText = $row['locationName'] . '-' . $row['extraLocation'];
+					$valueId = $row['idLocation'];
+					$new_fila = '<option value="'.$valueId.'">'.$labelText.'</option>';
+					if(strcasecmp($location['locationName'], $row['locationName'])==0 and strcasecmp($location['extraLocation'], $row['extraLocation'])==0){
+						$new_fila.=$filas;
+						$filas=$new_fila;
 					}
 					else{
-						require('views/Error.php');
+						$filas .= $new_fila;
+					}
+				}
+
+				$now = new DateTime();
+				$general_content = file_get_contents("./views/vehicleChange.html");
+				
+				$diccionario=array(
+					'{id}' => $_GET['id'],
+					'{vin}' => $vehicle['vin'],
+					'{option}' => $filas,
+					'{date}' => $now->format('Y-m-d H:m:S')
+				);
+				$general_content=strtr($general_content, $diccionario);
+
+				$data = array(
+					'page_title' => "Cambiar Ubicación",
+					'general_content' => $general_content
+				);
+				$this->createTemplate($data);
+			}
+			else{
+				$Correct=TRUE;//Flag to determine if it can create a new Inventory
+				$NoSet=FALSE; //Flag to determine if the variables are set
+				//Validate variables and if variables is set 
+				$IDLocation=isset($_POST['location'])?$this->validateID($_POST['location']):$NoSet=TRUE;
+				$IDVehicle=isset($_POST['id'])?$this->validateID($_POST['id']):$NoSet=TRUE;
+				$IDUser=isset($_SESSION['IDuser'])?$this->validateID($_SESSION['IDuser']):$NoSet=TRUE;
+				$Reason=isset($_POST['reason'])?$this->validateText($_POST['reason']):$NoSet=TRUE;
+				
+				if($NoSet==FALSE){
+					if($IDLocation==FALSE){
+						$Correct=FALSE;
+					}
+					elseif($IDVehicle==FALSE){
+						$Correct=FALSE;
+					}
+					elseif($IDUser==FALSE){
+						$Correct=FALSE;
+					}
+					elseif ($Reason==FALSE) {
+						$Correct=FALSE;
+					}
+					if($Correct==TRUE){
+						//Change vehicle´s location
+						$Result=$this->model->changeLocation($IDLocation,$IDUser,$IDVehicle,$Reason);
+						
+						if($Result==TRUE){
+							$vista = file_get_contents("./views/vehicleInfoNew.html");
+
+							$result = $this->model->select($IDVehicle);
+							$vehiculos = array();
+							while($fila = $result->fetch_assoc()) {
+								$vehiculos[] = $fila;
+							}
+			
+							$result = $this->model->selectVL($IDVehicle);
+							$ubicacion = array();
+							while($fila = $result->fetch_assoc()) {
+								$ubicacion[] = $fila;
+							}
+							$last=count($ubicacion)-1;
+							$diccionario = array(
+								'{id}' => $IDVehicle,
+								'{vin}' => $vehiculos[0]['vin'], 
+								'{brand}' => $vehiculos[0]['brand'],
+								'{type}' => $vehiculos[0]['type'], 
+								'{model}' => $vehiculos[0]['model'],
+								'{usuario}' => $ubicacion[$last]['user'],
+								'{ubicacion}' => $ubicacion[$last]['locationName'] . $ubicacion[$last]['extraLocation'],
+								'{fecha}' => substr($ubicacion[$last]['date'], 0, 10),
+								'{razon}' => $ubicacion[$last]['reason']);
+			
+							$vista = strtr($vista, $diccionario);
+							$data = array(
+								'page_title' => "Informacion del vehiculo",
+								'general_content' => $vista
+							);
+							$this->createTemplate($data);
+						}
+						else{
+							require('./views/Error.php');
+						}
+					}
+					else{
+						require('./views/Error.php');
 					}
 				}
 				else{
-					require('views/Error.php');
+					require('./views/Error.php');
 				}
-			}
-			else{
-				require('views/Error.php');
 			}
 		}
 	  
@@ -571,35 +646,146 @@
 		 * Create a new inventory but registering actual state and compare 
 		 */
 		private function exitVehicle(){
-			$Correct=TRUE;//Flag to determine if it can create a new Inventory
-			$NoSet=FALSE; //Flag to determine if the variables are set
-			//Validate variables and if variables is set 
-			$Mileage=isset($_POST['Mileage'])?$this->validateNumber($_POST['Mileage']):$NoSet=TRUE;
-			$Gasoline=isset($_POST['Gasoline'])?$this->validateRealNumber($_POST['Gasoline']):$NoSet=TRUE;
-			$IDPiece=isset($_POST['IDPiece'])?$this->validateID($_POST['IDPiece']):$NoSet=TRUE;
-			$Severity=isset($_POST['Severity'])?$this->validateText($_POST['Severity']):$NoSet=TRUE;
-			$IDVehicle=isset($_POST['IDVehicle'])?$this->validateNumber($_POST['IDVehicle']):$NoSet=TRUE;
-			$Observations=isset($_POST['Observations'])?$this->validateText($_POST['Observations']):$NoSet=TRUE;
-			
-			if($NoSet==FALSE){
-				
-				if($Correct==TRUE){
-					//Insert a new Inventory
-					$Result=$this->model->exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations);
+			if(!isset($_GET['id'])){
+				$result=$this->model->admissionInventory();
+				$vista = file_get_contents("./views/vehicleExitList.html");
+				$inicio_fila = strrpos($vista,'<tr>');
+				$final_fila = strrpos($vista,'</tr>') + 5;
+				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+				$filas="";
+				$action="";
+				$Inventories=array();
+				while($linea = $result->fetch_assoc()) {
+					$Inventories[] = $linea;
+				}
+				foreach ($Inventories as $row) {
+					if(strcasecmp($row['status'], 'EXIT')!=0){
+						$new_fila = $fila;
+						$fecha = new DateTime($row['date']);
+						$id=$row['idVehicle'];
+						$diccionario = array(
+							'{id}' => $id, 
+							'{status}' => $row['status'],
+							'{mileage}' => $row['mileage'],
+							'{gasoline}' => $row['gasoline'],
+							'{vehicle}' => $row['idVehicle'],
+							'{date}' => $fecha->format('Y-m-d H:m:s'),
+							'{action}' => "<a href='?ctrl=vehicle&act=exit&id=$id'>Dar Salida</a>"
+							);
+						$new_fila = strtr($new_fila,$diccionario);
+						$filas .= $new_fila;
+					}
+				}
+				$alert = file_get_contents("./views/alert.html");
+				$diccionario = array(
+						'{type}' => 'alert-info',
+						'{title}' => '',
+						'{text}' => 'Da click en Dar Salida para hacer la salida de un Vehiculo.');
+				$alert = strtr($alert, $diccionario);
+				$diccionario = array(
+						'{alert}' => $alert);
+				$vista = strtr($vista,$diccionario);
+
+				$vista = str_replace($fila, $filas, $vista);
+				$data['page_title']='Salida de Vehiculo';
+				$data['general_content']=$vista;
+				$this->createTemplate($data);
+			}
+			else{
+				if(empty($_POST)){
+					require('./models/inventoryMdl.php');
+					$InventoryMdl=new InventoryMdl();
+					$Piece=$InventoryMdl->selectPieces();
+					$pieces = '';
+					foreach ($Piece as $row) {
+						$new_piece = '<option value="'.$row['idPiece'].'">'.$row['PieceName'].'</option>';
+						$pieces .= $new_piece;
+					}
+	
+					$vista = file_get_contents("./views/vehicleExit.html");
+					$fecha=new DateTime();
+					$diccionario=array(
+						'{vehicle}' => $_GET['id'],
+						'{date}' => $fecha->format('Y-m-d H:m:s'),
+						'{piece}' => $pieces
+					);
+					$vista = strtr($vista, $diccionario);
+					$data['page_title']='Salida de Vehiculo';
+					$data['general_content']=$vista;
+					$this->createTemplate($data);
+				}
+				else{
+					$Correct=TRUE;//Flag to determine if it can create a new Inventory
+					$NoSet=FALSE; //Flag to determine if the variables are set
+					//Validate variables and if variables is set
+					$Mileage=isset($_POST['mileage'])?$this->validateNumber($_POST['mileage']):$NoSet=TRUE;
+					$Gasoline=isset($_POST['gasoline'])?$this->validateNumber($_POST['gasoline']):$NoSet=TRUE;
+					$IDPiece=isset($_POST['piece'])?$this->validateID($_POST['piece']):$NoSet=TRUE;
+					$Severity=isset($_POST['severity'])?$this->validateText($_POST['severity']):$NoSet=TRUE;
+					$IDVehicle=isset($_POST['vehicle'])?$this->validateNumber($_POST['vehicle']):$NoSet=TRUE;
+					echo "-$NoSet-";
+					$Observations=isset($_POST['observations'])?$this->validateText($_POST['observations']):$NoSet=TRUE;
 					
-					if($Result!=FALSE){
-						require('views/inventoryExit.php');
+					if($NoSet==FALSE){
+						
+						if($Correct==TRUE){
+							//Insert a new Inventory
+							$Result=$this->model->exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations);
+							
+							if($Result!=FALSE){
+								require('models/inventoryMdl.php');
+								$InventoryMdl=new InventoryMdl();
+								$Inventories=$InventoryMdl->listInventories();
+								$vista = file_get_contents("./views/vehicleExitList.html");
+								$inicio_fila = strrpos($vista,'<tr>');
+								$final_fila = strrpos($vista,'</tr>') + 5;
+								$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+								$filas="";
+								$action="";
+								foreach ($Inventories as $row) {
+									$new_fila = $fila;
+									$fecha = new DateTime($row['date']);
+									$diccionario = array(
+										'{id}' => $row['idInventory'], 
+										'{status}' => $row['status'],
+										'{mileage}' => $row['mileage'],
+										'{gasoline}' => $row['gasoline'],
+										'{vehicle}' => $row['idVehicle'],
+										'{date}' => $fecha->format('Y-m-d H:m:s'),
+										'{action}' => ''
+										);
+									$new_fila = strtr($new_fila,$diccionario);
+									$filas .= $new_fila;
+								}
+				
+								$alert = file_get_contents("./views/alert.html");
+								$diccionario = array(
+										'{type}' => 'alert-success',
+										'{title}' => '¡Exito!',
+										'{text}' => 'El Salida exitosa del vehiculo.');
+								$alert = strtr($alert, $diccionario);
+				
+								$diccionario = array(
+										'{alert}' => $alert);
+								$vista = strtr($vista,$diccionario);
+				
+								$vista = str_replace($fila, $filas, $vista);
+								$data['page_title']='Salida de Vehiculos';
+								$data['general_content']=$vista;
+								$this->createTemplate($data);
+							}
+							else{
+								require('views/Error.php');
+							}
+						}
+						else{
+							require('views/Error.php');
+						}
 					}
 					else{
 						require('views/Error.php');
 					}
 				}
-				else{
-					require('views/Error.php');
-				}
-			}
-			else{
-				require('views/Error.php');
 			}
 		}
 	}

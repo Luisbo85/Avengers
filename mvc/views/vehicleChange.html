@@ -1,0 +1,55 @@
+     <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-3 col-md-2 sidebar">
+	        <ul class="nav nav-sidebar">
+	          <li><a href="./index.php?ctrl=vehicle&act=create">Insertar vehiculo</a></li>
+	          <li><a href="./index.php?ctrl=vehicle&act=select">Informacion de vehiculo</a></li>
+	          <li><a href="./index.php?ctrl=vehicle&act=select">Lista de vehiculos</a></li>
+	          <li><a href="./index.php?ctrl=vehicle&act=exit">Salida de vehiculo</a></li>
+	          <li><a href="./index.php?ctrl=vehicle&act=update">Actualizar vehiculo</a></li>
+	        </ul>
+		  </div>
+        </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      	<h2 class="page-header">Cambio de Ubicación</h2>
+      	<div class="row placeholders">
+          <form class="form-horizontal" role="form" method="post" action="?ctrl=vehicle&act=change">
+	      	<div class="form-group">
+	          <label for="vin" class="col-sm-2 control-label">Vin</label>
+	          <div class="col-sm-10">
+	            <input type="text" class="form-control" id="vin" name="vin" value="{vin}" readonly>
+	          </div>
+	        </div>
+	      	
+	        <div class="form-group">
+	          <label for="location" class="col-sm-2 control-label">Ubicacion</label>
+	          <div class="col-sm-10">
+	            <select class="form-control" id="location" name="location">
+	              {option}
+	            </select>
+	          </div>
+	        </div>
+	        
+	        <div class="form-group">
+	          <label for="date" class="col-sm-2 control-label">Fecha</label>
+	          <div class="col-sm-10">
+	            <input type="text" class="form-control" id="date" name="date" value="{date}" readonly>
+	          </div>
+	        </div>
+	        
+	        <div class="form-group">
+	          <label for="reason" class="col-sm-2 control-label">Razon</label>
+	          <div class="col-sm-10">
+	            <input type="text" class="form-control" id="reason" name="reason" required>
+	          </div>
+	        </div>
+	        
+	        <div class="form-group">
+			  <div class="col-sm-offset-2 col-sm-10">
+			    <button type="submit" class="btn btn-default" name="id" value="{id}">Cambiar</button>
+			  </div>
+			</div>
+		  </form>
+		</div>
+      </div>
+     </div>

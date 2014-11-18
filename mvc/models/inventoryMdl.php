@@ -36,10 +36,10 @@
 			$Observations=$this->DbDriver->real_escape_string($Observations);
 			if($stmt=$this->DbDriver->prepare("INSERT INTO Inventory (mileage,gasoline,idVehicle,observations,date) 
 		 								  	 			  VALUES (?,?,?,?,?)")){
-		 		$Hoy=date('Y-m-d H:i:s');
+		 		$Hoy=date('Y-m-d H:m:s');
 				$stmt->bind_param('idiss',$Mileage,$Gasoline,$IDVehicle,$Observations,$Hoy);
 				if($stmt->execute()==TRUE){
-					if($stmt2=$this->DbDriver->prepare("INSERT INTO hit (idInventory,idPiece,Severity) 
+					if($stmt2=$this->DbDriver->prepare("INSERT INTO Hit (idInventory,idPiece,Severity) 
 		 								  	 			  VALUES (?,?,?)")){
 		 				$LastID=$stmt->insert_id;
 		 				$stmt->close();
@@ -65,11 +65,6 @@
 				
 		 	}
 			
-			$this->Mileage=$Mileage;
-			$this->Gasoline=$Gasoline;
-			$this->IDVehicle=$IDVehicle;
-			$this->Observations=$Observations;
-			
 			return $InventoryInserted;
 		}
 		 
@@ -82,7 +77,7 @@
 			$Inventory=FALSE;
 		 	
 			//Select an inventory from database
-			$Result=$this->DbDriver->query("SELECT * FROM inventory WHERE IDInventory=$IDInventory");
+			$Result=$this->DbDriver->query("SELECT * FROM Inventory WHERE IDInventory=$IDInventory");
 			if($Result!=FALSE){
 				$Inventory=$Result->fetch_assoc();
 			}
@@ -95,19 +90,26 @@
 		 * @return mixed $Inventories
 		 */
 		function listInventories(){
-			$Inventories=FALSE;
-		 	
 			//Select all inventories from database
-			$Result=$this->DbDriver->query("SELECT * FROM inventory");
+			$Result=$this->DbDriver->query("SELECT * FROM Inventory");
+			return $Result;
+		}
+		
+		function piece($piece){
+			$Inserted=FALSE;
+		 	
+			//Select an inventory from database
+			$Result=$this->DbDriver->query("INSERT INTO Piece (PieceName) values ('$piece')");
 			if($Result!=FALSE){
-				$Inventories=array();
-				$row=$Result->fetch_assoc();
-				while($row!=null){
-					$Inventories[]=$row;
-					$row=$Result->fetch_assoc();	
-				}
+				$Inserted=TRUE;
 			}
-			return $Inventories;
+			return $Inserted;
+		}
+		
+		function selectPieces(){
+			//Select all pieces from database
+			$Result=$this->DbDriver->query("SELECT * FROM Piece");
+			return $Result;
 		}
 		
 	}

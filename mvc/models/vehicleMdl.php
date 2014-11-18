@@ -149,7 +149,7 @@
 			$IDUser=$this->bdDriver->real_escape_string($IDUser);
 			$IDVehicle=$this->bdDriver->real_escape_string($IDVehicle);
 			$Reason=$this->bdDriver->real_escape_string($Reason);
-			if($stmt=$this->bdDriver->prepare("INSERT INTO vehicleLocation (idLocation,idUser,idVehicle,reason,date) 
+			if($stmt=$this->bdDriver->prepare("INSERT INTO VehicleLocation (idLocation,idUser,idVehicle,reason,date) 
 		 								  	 			  VALUES (?,?,?,?,?)")){
 		 		$Hoy=date('Y-m-d H:i:s');
 				$stmt->bind_param('iiiss',$IDLocation,$IDUser,$IDVehicle,$Reason,$Hoy);
@@ -189,7 +189,7 @@
 		 		$Hoy=date('Y-m-d H:i:s');
 				$stmt->bind_param('idiss',$Mileage,$Gasoline,$IDVehicle,$Observations,$Hoy);
 				if($stmt->execute()==TRUE){
-					if($stmt2=$this->bdDriver->prepare("INSERT INTO hit (idInventory,idPiece,Severity) 
+					if($stmt2=$this->bdDriver->prepare("INSERT INTO Hit (idInventory,idPiece,Severity) 
 		 								  	 			  VALUES (?,?,?)")){
 		 				$LastID=$stmt->insert_id;
 		 				$stmt->close();
@@ -214,7 +214,23 @@
 		 	}
 			
 			return $Exit;
-		 }
+		}
+
+
+		/**
+		 * Return all inventories about vehicles
+		 * @return mixed $result
+		 */
+		function admissionInventory(){
+			$result = $this->bdDriver->query(" SELECT T1.* FROM Inventory T1
+    										   INNER JOIN ( SELECT idVehicle, MAX(date) max_fecha FROM Inventory 
+    										   				GROUP BY idVehicle) T2
+    										   ON T1.idVehicle = T2.idVehicle 
+    										   AND T1.date = T2.max_fecha
+    										   ORDER BY T1.date");
+			return $result;
+		}
+		
 		
 	}
 ?>
