@@ -5,6 +5,7 @@
 		private $type;
 		private $model;
 		private $idVehicle;
+		private $idOwner;
 		
 		function __construct() {
 			require("databaseConfig.inc");
@@ -26,18 +27,19 @@
 		 *@return true in success
 		 *Insert in database new vehicle
 		 */
-		function create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason) {
-			if($vin && $brand && $type && $model && $idLocation && $idUser && $date && $reason) {
+		function create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason, $idOwner) {
+			if($vin && $brand && $type && $model && $idLocation && $idUser && $date && $reason && $idOwner) {
 				$this->$vin = $this->bdDriver->escape_string($vin);
 				$this->$brand = $this->bdDriver->escape_string($brand);
 				$this->$type = $this->bdDriver->escape_string($type);
 				$this->$model = $this->bdDriver->escape_string($model);
+				$this->$idOwner = $this->bdDriver->escape_string($idOwner);
 
 				$result = $this->bdDriver->query("INSERT INTO Vehicle(vin, brand, type, model) VALUES('" . $vin ."', '" . $brand ."', '" .  $type ."', " .  $model . ")");
 				
 				if($this->bdDriver->errno == 0) {
 					$idVehicle = $this->bdDriver->insert_id;
-
+					$this->bdDriver->query("INSERT INTO VehicleUser(idVehicle, idUser) VALUES(" . $idVehicle . ", " .  $idUser . ")");
 					$result = $this->bdDriver->query("INSERT INTO VehicleLocation(idVehicle, idLocation, idUser, date, reason) VALUES(" . $idVehicle .", " . $idLocation .", " .  $idUser .", '" .  $date . "', '" . $reason . "')");
 				}
 

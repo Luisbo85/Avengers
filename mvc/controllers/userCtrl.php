@@ -119,7 +119,7 @@
 		private function create(){
 			if(empty($_POST)){
 				$data['page_title']='Registro de Usuario';
-				$data['general_content']=file_get_contents('./views/userCreate.html');
+				$data['general_content']=file_get_contents('./views/UserCreate.html');
 				$this->createTemplate($data);
 			}else{
 				$Correct=TRUE;//Flag to determine if it can create a new user
@@ -198,7 +198,7 @@
 							
 							$Users=$this->listUsers();
 							
-							$vista = file_get_contents("./views/userList.html");
+							$vista = file_get_contents("./views/U 	serList.html");
 							$inicio_fila = strrpos($vista,'<tr>');
 							$final_fila = strrpos($vista,'</tr>') + 5;
 							$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -487,7 +487,7 @@
 								
 								$Users=$this->listUsers();
 							
-								$vista = file_get_contents("./views/userList.html");
+								$vista = file_get_contents("./views/UserList.html");
 								$inicio_fila = strrpos($vista,'<tr>');
 								$final_fila = strrpos($vista,'</tr>') + 5;
 								$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -561,7 +561,7 @@
 		private function listUsers(){
 			$Users=$this->model->listUsers();
 			if(isset($_GET['act']) and $_GET['act']=='list'){
-				$vista = file_get_contents("./views/userList.html");
+				$vista = file_get_contents("./views/UserList.html");
 				$inicio_fila = strrpos($vista,'<tr>');
 				$final_fila = strrpos($vista,'</tr>') + 5;
 				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);

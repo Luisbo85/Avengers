@@ -16,6 +16,8 @@
 		function run() {
 			if(isset($_GET['act'])) {
 				switch($_GET['act']) {
+					case 'fileLoad':
+						break;
 					case 'create':
 						//user is valid and have permission
 						if($this->isLogged()){
@@ -343,9 +345,10 @@
 			$idUser = isset($_SESSION['IDuser']) ? $this->validateNumber($_SESSION['IDuser']) : '';
 			$date = isset($_POST['date']) ? $this->validateDateTime($_POST['date']) : '';
 			$reason = isset($_POST['reason']) ? $this->validateTextNumber($_POST['reason']) : '';
+			$idOwner = isset($_POST['idUser']) ? $this->validateTextNumber($_POST['idUser']) : '';
 	
 			//use model to insert
-			$result = $this->model->create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason);
+			$result = $this->model->create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason, $idOwner);
 			//insert successful
 			if($result) {
 				$vista = file_get_contents("./views/vehicleList.html");

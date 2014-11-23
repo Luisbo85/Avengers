@@ -27,7 +27,6 @@
 			}
 			//execute ctlr
 			$ctrl->run();
-			
 		}
 		else{
 			require('controllers/validationCtrl.php');
