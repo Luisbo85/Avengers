@@ -26,7 +26,7 @@
 					case 'logout':
 						if($this->isLogged()==TRUE){
 							$this->logout();
-							require('views/logout.php');
+							$this->goHome();
 						}
 						break;
 					case 'create':
@@ -36,11 +36,11 @@
 			  					$this->create();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 			  			break;
 					case 'delete':
@@ -50,11 +50,11 @@
 			  					$this->delete();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'update':
@@ -64,11 +64,11 @@
 			  					$this->update();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'select':
@@ -78,11 +78,11 @@
 			  					$this->select();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'list':
@@ -93,11 +93,11 @@
 			  					$this->listUsers();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					default:
@@ -105,11 +105,16 @@
 				}
 			}
 			else{
-				$data = array(
-					'page_title' => "Usuario",
-					'general_content' => file_get_contents("views/userMenu.html")
-				);
-				$this->createTemplate($data);
+				if($this->isLogged()){
+					$data = array(
+						'page_title' => "Usuario",
+						'general_content' => file_get_contents("views/userMenu.html")
+					);
+					$this->createTemplate($data);
+				}
+				else{
+					$this->goHome();
+				}
 			}
 		}
 		
@@ -198,7 +203,7 @@
 							
 							$Users=$this->listUsers();
 							
-							$vista = file_get_contents("./views/U 	serList.html");
+							$vista = file_get_contents("./views/UserList.html");
 							$inicio_fila = strrpos($vista,'<tr>');
 							$final_fila = strrpos($vista,'</tr>') + 5;
 							$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -237,17 +242,15 @@
 							$this->createTemplate($data);
 						}
 						else{
-							echo 'Insert';
-							require('views/Error.php');
+							$this->msgError();
 						}
 					}
 					else{
-						echo 'correcto';
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
 				}
 			}
 		}
@@ -264,7 +267,7 @@
 					if($Result){
 						$Users=$this->listUsers();
 						
-						$vista = file_get_contents("./views/userList.html");
+						$vista = file_get_contents("./views/UserList.html");
 						$inicio_fila = strrpos($vista,'<tr>');
 						$final_fila = strrpos($vista,'</tr>') + 5;
 						$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -311,19 +314,20 @@
 						$this->createTemplate($data);
 					}
 					else{
-						echo 'result';
-					 	//require('views/Error.php');
+					 	$this->msgError();
+						$data['general_content']=file_get_contents('views/Error.html');
+						$this->createTemplate($data);
 					}
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
 				}
 				
 			}
 			else{
 				$Users=$this->listUsers();
 						
-				$vista = file_get_contents("./views/userList.html");
+				$vista = file_get_contents("./views/UserList.html");
 				$inicio_fila = strrpos($vista,'<tr>');
 				$final_fila = strrpos($vista,'</tr>') + 5;
 				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -369,7 +373,7 @@
 			if(!isset($_GET['id'])){
 				$Users=$this->listUsers();
 						
-				$vista = file_get_contents("./views/userList.html");
+				$vista = file_get_contents("./views/UserList.html");
 				$inicio_fila = strrpos($vista,'<tr>');
 				$final_fila = strrpos($vista,'</tr>') + 5;
 				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
@@ -526,15 +530,15 @@
 								$this->createTemplate($data);
 							}
 							else{
-								require('views/Error.php');
+								$this->msgError();
 							}
 						}
 						else{
-							require('views/Error.php');
+							$this->msgError();
 						}
 					}
 					else{
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 			}

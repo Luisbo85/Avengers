@@ -19,11 +19,11 @@
 			  					$this->create();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 					  	break;
 					case 'piece':
@@ -33,11 +33,11 @@
 			  					$this->piece();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'select':
@@ -47,11 +47,11 @@
 								$this->select();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'list':
@@ -61,11 +61,11 @@
 								$this->listInventories();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					default:
@@ -73,11 +73,16 @@
 				}
 			}
 			else{
-				$data = array(
-					'page_title' => "Inventario",
-					'general_content' => file_get_contents("views/inventoryMenu.html")
-				);
-				$this->createTemplate($data);
+				if($this->isLogged()){
+					$data = array(
+						'page_title' => "Inventario",
+						'general_content' => file_get_contents("views/inventoryMenu.html")
+					);
+					$this->createTemplate($data);
+				}
+				else{
+					$this->goHome();
+				}
 			}
 		}
 	  
@@ -188,16 +193,15 @@
 							$this->createTemplate($data);
 						}
 						else{
-						
-							require('views/Error.php');
+							$this->msgError();
 						}
 					}
 					else{
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
 				}
 			}
 		}
@@ -217,11 +221,13 @@
 					require('views/inventorySelected.php');
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
+					$data['general_content']=file_get_contents('views/Error.html');
+					$this->createTemplate($data);
 				}
 			}
 			else{
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 
@@ -326,11 +332,11 @@
 						$this->createTemplate($data);
 					}
 					else {
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
 				}
 			}
 		}

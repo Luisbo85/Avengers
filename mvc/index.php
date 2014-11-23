@@ -33,9 +33,9 @@
 			require('controllers/standardCtrl.php');
 			$ctrl=new StandardCtrl();
 			if(!isset($_SESSION['user'])){		
-				$data['page_title']='Login';
-				$data['general_content']=file_get_contents('views/login.html');
-				$ctrl->createTemplate($data);
+				$vista=file_get_contents('views/login.html');
+				$vista.=file_get_contents('views/pie.html');
+				echo $vista;
 			}
 			else {
 				$data['page_title']='Usuario';

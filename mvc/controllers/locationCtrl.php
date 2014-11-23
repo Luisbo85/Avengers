@@ -31,11 +31,11 @@
 		  						}
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'select':
@@ -89,11 +89,11 @@
 		  						}
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'selectAll':
@@ -103,11 +103,11 @@
 			  					$this->selectAll();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'delete':
@@ -117,11 +117,11 @@
 			  					$this->delete();
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'update':
@@ -196,22 +196,27 @@
 		  						}
 			  				}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 			  			}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					default:
 						break;
 				}
 			} else {
-				$data = array(
-					'page_title' => "Vehiculo",
-					'general_content' => file_get_contents("views/locationMenu.html")
-				);
-				$this->createTemplate($data);
+				if($this->isLogged()){
+					$data = array(
+						'page_title' => "Vehiculo",
+						'general_content' => file_get_contents("views/locationMenu.html")
+					);
+					$this->createTemplate($data);
+				}
+				else{
+					$this->goHome();
+				}
 			}
 		}
 
@@ -268,9 +273,8 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/locationInserted.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 
@@ -326,9 +330,10 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/locationSelected.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
+				$data['general_content']=file_get_contents('views/Error.html');
+				$this->createTemplate($data);
 			}
 		}
 
@@ -344,7 +349,7 @@
 				//load the view
 				require('views/locationSelected.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 
@@ -401,9 +406,8 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/locationDeleted.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 
@@ -462,9 +466,8 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/locationUpdated.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 	}

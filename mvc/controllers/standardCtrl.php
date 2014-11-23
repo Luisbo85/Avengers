@@ -48,15 +48,15 @@
 						$Logged=TRUE;
 					}
 					else{
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 				else{
-					require('views/Error.php');
+					$this->msgError();
 				}
 			}
 			else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 			return $Logged;
 		}
@@ -95,6 +95,18 @@
 
 		function goHome(){
 			header('Location: ./');
+		}
+		
+		function msgError(){
+			$data['page_title']='Error';
+			$data['general_content']=file_get_contents('views/Error.html');
+			$this->createTemplate($data);
+		}
+		
+		function noAccess(){
+			$data['page_title']='Sin Acceso';
+			$data['general_content']=file_get_contents('views/NoAccess.html');
+			$this->createTemplate($data);
 		}
 	}
 ?>

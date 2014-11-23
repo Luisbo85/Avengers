@@ -1,3 +1,0 @@
-<?php
-	echo 'Sesion Cerrada';
-?>

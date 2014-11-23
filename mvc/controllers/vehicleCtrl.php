@@ -54,11 +54,11 @@
 		  							$this->create();
 		  						}
 							} else {
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'select':
@@ -114,11 +114,11 @@
 		  						}
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'selectAll':
@@ -128,11 +128,11 @@
 		  						$this->selectAll();
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'delete':
@@ -142,11 +142,11 @@
 		  						$this->delete();
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'update':
@@ -225,11 +225,11 @@
 		  						}
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'change':
@@ -239,11 +239,11 @@
 		  						$this->changeLocation();
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					case 'exit':
@@ -252,22 +252,27 @@
 		  						$this->exitVehicle();
 		  					}
 							else{
-								require('views/NoAccess.php');
+								$this->noAccess();
 							}
 		  				}
 						else{
-							require('views/needLogin.php');
+							$this->goHome();
 						}
 						break;
 					default:
 						break;
 				}
 			} else {
-				$data = array(
-					'page_title' => "Vehiculo",
-					'general_content' => file_get_contents("views/vehicleMenu.html")
-				);
-				$this->createTemplate($data);
+				if($this->isLogged()){
+					$data = array(
+						'page_title' => "Vehiculo",
+						'general_content' => file_get_contents("views/vehicleMenu.html")
+					);
+					$this->createTemplate($data);
+				}
+				else{
+					$this->goHome();
+				}
 			}
 		}
 	
@@ -328,7 +333,9 @@
 				$this->createTemplate($data);
 				//require('views/vehicleDeleted.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
+				$data['general_content']=file_get_contents('views/Error.html');
+				$this->createTemplate($data);
 			}
 		}
 	
@@ -393,9 +400,8 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/vehicleInserted.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 	
@@ -442,7 +448,7 @@
 				);
 				$this->createTemplate($data);
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 
@@ -458,7 +464,7 @@
 				//load the view
 				require('views/vehicleSelected.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 	
@@ -518,9 +524,8 @@
 					'general_content' => $vista
 				);
 				$this->createTemplate($data);
-				//require('views/vehicleUpdated.php');
 			} else {
-				require('views/Error.php');
+				$this->msgError();
 			}
 		}
 		
@@ -632,15 +637,15 @@
 							$this->createTemplate($data);
 						}
 						else{
-							require('./views/Error.php');
+							$this->msgError();
 						}
 					}
 					else{
-						require('./views/Error.php');
+						$this->msgError();
 					}
 				}
 				else{
-					require('./views/Error.php');
+					$this->msgError();
 				}
 			}
 		}
@@ -778,15 +783,17 @@
 								$this->createTemplate($data);
 							}
 							else{
-								require('views/Error.php');
+								$this->msgError();
+								$data['general_content']=file_get_contents('views/Error.html');
+								$this->createTemplate($data);
 							}
 						}
 						else{
-							require('views/Error.php');
+							$this->msgError();
 						}
 					}
 					else{
-						require('views/Error.php');
+						$this->msgError();
 					}
 				}
 			}
