@@ -1,5 +1,5 @@
 <script type="text/javascript">
-$('#idUsuario').ready(function() {
+$('#idUser').ready(function() {
   $.ajax({
     url:'./models/listaUsuario.php',
     dataType: 'json',
@@ -8,7 +8,7 @@ $('#idUsuario').ready(function() {
       for(i in json){
         var texto = document.createTextNode(json[i].user);
         var option = document.createElement('option');
-        option.setAttribute('value',json[i].idVehicle);
+        option.setAttribute('value',json[i].idUser);
         option.appendChild(texto);
         select.appendChild(option);
       }
@@ -25,6 +25,7 @@ $('#idUsuario').ready(function() {
         <li><a href="./index.php?ctrl=vehicle&act=select">Lista de vehiculos</a></li>
         <li><a href="./index.php?ctrl=vehicle&act=update">Actualizar vehiculo</a></li>
         <li><a href="./index.php?ctrl=vehicle&act=exit">Salida de vehiculo</a></li>
+        <li><a href="./index.php?ctrl=vehicle&act=vehicles">Mis Vehiculos</a></li>
       </ul>
     </div>
   </div>
@@ -36,7 +37,7 @@ $('#idUsuario').ready(function() {
     <form class="form-horizontal" role="form" method="post" action="./index.php?ctrl=vehicle&act=create">
 
       <div class="form-group">
-        <label for="idUser" class="col-sm-2 control-label">Usuario</label>
+        <label for="idUser" class="col-sm-2 control-label">Dueño</label>
         <div class="col-sm-10">
           <select class="form-control" id="idUser" name="idUser">
           </select>

@@ -39,11 +39,16 @@
 				
 				if($this->bdDriver->errno == 0) {
 					$idVehicle = $this->bdDriver->insert_id;
-					$this->bdDriver->query("INSERT INTO VehicleUser(idVehicle, idUser) VALUES(" . $idVehicle . ", " .  $idUser . ")");
+					$this->bdDriver->query("INSERT INTO VehicleUser(idVehicle, idUser) VALUES(" . $idVehicle . ", " .  $this->$idOwner . ")");
 					$result = $this->bdDriver->query("INSERT INTO VehicleLocation(idVehicle, idLocation, idUser, date, reason) VALUES(" . $idVehicle .", " . $idLocation .", " .  $idUser .", '" .  $date . "', '" . $reason . "')");
+					if($this->bdDriver->insert_id){
+						$result=$idVehicle;
+					}
+					else{
+						$result=$this->bdDriver->insert_id;
+					}
 				}
 
-				$result = $this->bdDriver->insert_id;
 				return $result;
 			}
 
@@ -220,7 +225,7 @@
 
 
 		/**
-		 * Return all inventories about vehicles
+		 * Return most recent inventory about each vehicle
 		 * @return mixed $result
 		 */
 		function admissionInventory(){
@@ -230,6 +235,18 @@
     										   ON T1.idVehicle = T2.idVehicle 
     										   AND T1.date = T2.max_fecha
     										   ORDER BY T1.date");
+			return $result;
+		}
+		
+		/**
+		 * Do a consult with database and get the user´s vehicle list in a Result Object
+		 */
+		function vehicles($ID){
+			$result = $this->bdDriver->query(" SELECT V.* FROM Vehicle V
+    										   INNER JOIN VehicleUser VU
+    										   ON V.idVehicle = VU.idVehicle 
+    										   AND VU.idUser = $ID
+    										   ORDER BY V.idVehicle");
 			return $result;
 		}
 		

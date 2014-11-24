@@ -74,7 +74,7 @@
 					case 'select':
 						//User is valid and have permissions
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					$this->select();
 			  				}
 							else{
@@ -89,7 +89,7 @@
 						//User is valid and have permissions
 						if($this->isLogged()){
 							
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					$this->listUsers();
 			  				}
 							else{

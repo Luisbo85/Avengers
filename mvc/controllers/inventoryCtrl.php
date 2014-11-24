@@ -43,7 +43,7 @@
 					case 'select':
 						//User is valid and have permissions
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 								$this->select();
 			  				}
 							else{
@@ -57,7 +57,7 @@
 					case 'list':
 						//User is valid and have permissions
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 								$this->listInventories();
 			  				}
 							else{
@@ -100,7 +100,7 @@
 					$vehicles[] = $linea;
 				}
 				foreach ($vehicles as $row) {
-					$new_fila = '<option value="'.$row['idVehicle'].'">'.$row['idVehicle'].'</option>';
+					$new_fila = '<option value="'.$row['idVehicle'].'">'.$row['vin'].'</option>';
 					$filas .= $new_fila;
 				}
 				
@@ -218,7 +218,7 @@
 				$Inventory=$this->model->select($IDInventory);
 				
 				if(is_array($Inventory)){
-					require('views/inventorySelected.php');
+					//require('views/inventorySelected.php');
 				}
 				else{
 					$this->msgError();

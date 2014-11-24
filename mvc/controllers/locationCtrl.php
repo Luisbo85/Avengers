@@ -18,7 +18,7 @@
 					case 'create':
 						//user is valid and have permission
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					if(empty($_POST)){
 		  							$general_content = file_get_contents("./views/locationForm.html");
 									$data = array(
@@ -41,7 +41,7 @@
 					case 'select':
 						//user is valid and have permission
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					if(!isset($_GET['id'])) {
 		  							$vista = file_get_contents("./views/locationList.html");
 		  							$resultQuery = $this->model->selectAll();
@@ -99,7 +99,7 @@
 					case 'selectAll':
 						//user is valid and have permission
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					$this->selectAll();
 			  				}
 							else{
@@ -127,7 +127,7 @@
 					case 'update':
 						//user is valid and have permission
 						if($this->isLogged()){
-			  				if($this->isManager() or $this->isUser()){
+			  				if($this->isManager()){
 			  					if(!isset($_GET['id'])) {
 		  							$vista = file_get_contents("./views/locationList.html");
 		  							$resultQuery = $this->model->selectAll();

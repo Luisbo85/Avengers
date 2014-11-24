@@ -73,12 +73,31 @@
 			return FALSE;
 		}
 		
+		/** 
+		 * This functions returns true if the user has logged in as User
+		 * Otherwise returns false
+		 * @return boolean
+		 */
 		function isUser(){
 			if(isset($_SESSION['job']) and strcasecmp($_SESSION['job'],'User')==0){
 				return TRUE;
 			}
 			return FALSE;
 		}
+		
+		/** 
+		 * This functions returns true if the user has logged in as Client
+		 * Otherwise returns false
+		 * @return boolean
+		 */
+		function isClient()
+		{
+			if(isset($_SESSION['job']) and strcasecmp($_SESSION['job'],'Client')==0){
+				return TRUE;
+			}
+			return FALSE;
+		}
+		
 
 		function createTemplate($data){
 			$header = file_get_contents('./views/cabecera.html');

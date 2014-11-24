@@ -152,7 +152,7 @@
 					case 'update':
 						//user is valid and have permission
 						if($this->isLogged()){
-		  					if($this->isManager() or $this->isUser()){
+		  					if($this->isManager()){
 		  						if(!isset($_GET['id'])) {
 		  							$vista = file_get_contents("./views/vehicleList.html");
 		  							$resultQuery = $this->model->selectAll();
@@ -250,6 +250,19 @@
 						if($this->isLogged()){
 		  					if($this->isManager() or $this->isUser()){
 		  						$this->exitVehicle();
+		  					}
+							else{
+								$this->noAccess();
+							}
+		  				}
+						else{
+							$this->goHome();
+						}
+						break;
+					case 'vehicles':
+						if($this->isLogged()){
+		  					if($this->isManager() or $this->isUser() or $this->isClient()){
+		  						$this->vehicles();
 		  					}
 							else{
 								$this->noAccess();
@@ -358,47 +371,31 @@
 			$result = $this->model->create($vin, $brand, $type, $model, $idLocation, $idUser, $date, $reason, $idOwner);
 			//insert successful
 			if($result) {
-				$vista = file_get_contents("./views/vehicleList.html");
-				$resultQuery = $this->model->selectAll();
-
-				$vehiculos = array();
-				while($fila = $resultQuery->fetch_assoc()) {
-					$vehiculos[] = $fila;
+				
+				$filas = '<option value="'.$result.'">'.$vin.'</option>';
+				
+				require('models/inventoryMdl.php');
+				$inventoryMdl=new InventoryMdl();
+				$result=$inventoryMdl->selectPieces();
+				$pieces = '';
+				while($linea = $result->fetch_assoc()) {
+					$Piece[] = $linea;
+				}
+				foreach ($Piece as $row) {
+					$new_piece = '<option value="'.$row['idPiece'].'">'.$row['PieceName'].'</option>';
+					$pieces .= $new_piece;
 				}
 
-				$inicio_fila = strrpos($vista,'<tr>');
-				$final_fila = strrpos($vista,'</tr>') + 5;
-				$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
-
-				$filas = '';
-				foreach ($vehiculos as $row) {
-					$new_fila = $fila;
-					$diccionario = array(
-						'{id}' => $row['idVehicle'],
-						'{vin}' => $row['vin'], 
-						'{brand}' => $row['brand'],
-						'{type}' => $row['type'], 
-						'{model}' => $row['model']);
-					$new_fila = strtr($new_fila,$diccionario);
-					$filas .= $new_fila;
-				}
-				$vista = str_replace($fila, $filas, $vista);
-
-				$alert = file_get_contents("./views/alert.html");
-				$diccionario = array(
-						'{type}' => 'alert-success',
-						'{title}' => '¡Insertado!',
-						'{text}' => 'Vehiculo insertado exitosamente.');
-				$alert = strtr($alert, $diccionario);
-
-				$diccionario = array(
-						'{alert}' => $alert);
-				$vista = strtr($vista,$diccionario);
-
-				$data = array(
-					'page_title' => "Lista de vehiculos",
-					'general_content' => $vista
+				$vista = file_get_contents("./views/inventoryCreate.html");
+				$fecha=new DateTime();
+				$diccionario=array(
+					'{option}' => $filas,
+					'{date}' => $fecha->format('Y-m-d H:m:s'),
+					'{piece}' => $pieces
 				);
+				$vista = strtr($vista, $diccionario);
+				$data['page_title']='Registrar Inventario';
+				$data['general_content']=$vista;
 				$this->createTemplate($data);
 			} else {
 				$this->msgError();
@@ -462,7 +459,7 @@
 			//select successful
 			if($result) {
 				//load the view
-				require('views/vehicleSelected.php');
+				//require('views/vehicleSelected.php');
 			} else {
 				$this->msgError();
 			}
@@ -796,6 +793,63 @@
 						$this->msgError();
 					}
 				}
+			}
+		}
+
+		/**
+		 * Shown a list with user's vehicles
+		 */
+		private function vehicles(){
+			$NoSet=FALSE;
+			$ID=isset($_SESSION['IDuser'])?$this->validateID($_SESSION['IDuser']):$NoSet=TRUE;
+			if(!$NoSet and $ID){
+				$result=$this->model->vehicles($ID);
+				if($result){
+					$vista = file_get_contents("./views/vehicleMyList.html");
+
+					$vehiculos = array();
+					while($fila = $result->fetch_assoc()) {
+						$vehiculos[] = $fila;
+					}
+
+					$inicio_fila = strrpos($vista,'<tr>');
+					$final_fila = strrpos($vista,'</tr>') + 5;
+					$fila = substr($vista,$inicio_fila,$final_fila-$inicio_fila);
+
+					$filas = '';
+					foreach ($vehiculos as $row) {
+						$new_fila = $fila;
+						$diccionario = array(
+							'{vin}' => $row['vin'], 
+							'{brand}' => $row['brand'],
+							'{type}' => $row['type'], 
+							'{model}' => $row['model']);
+						$new_fila = strtr($new_fila,$diccionario);
+						$filas .= $new_fila;
+					}
+
+					$alert = file_get_contents("./views/alert.html");
+					$diccionario = array(
+							'{type}' => 'alert-info',
+							'{title}' => '',
+							'{text}' => 'Esta es la lista de tus vehiculos.');
+					$alert = strtr($alert, $diccionario);
+
+					$diccionario = array(
+							'{alert}' => $alert);
+					$vista = strtr($vista,$diccionario);
+
+					$vista = str_replace($fila, $filas, $vista);
+
+					$data = array(
+						'page_title' => "Mis Vehiculos",
+						'general_content' => $vista
+					);
+					$this->createTemplate($data);
+				}
+			}
+			else{
+				$this->msgError();
 			}
 		}
 	}
