@@ -143,5 +143,9 @@
 			}
 			return $Users;
 		}
+		
+		function recover(){
+			
+		}
 	}
 ?>

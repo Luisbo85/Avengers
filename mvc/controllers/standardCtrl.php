@@ -40,7 +40,7 @@
 			if($NoSet==FALSE){
 				if($User!=FALSE and $Pass!=FALSE){
 					$result=$this->standardMdl->login($User,$Pass);
-					if(is_array($result)){
+					if(is_array($result) and $result['status']==TRUE){
 						$_SESSION['IDuser']=$result['idUser'];
 						$_SESSION['job']=$result['job'];
 						$_SESSION['user']=$User;
@@ -116,9 +116,14 @@
 			header('Location: ./');
 		}
 		
-		function msgError(){
+		function msgError($msg=''){
 			$data['page_title']='Error';
 			$data['general_content']=file_get_contents('views/Error.html');
+			$dictionary = array(
+				'{msg}' => "<p>$msg</p>",
+				);
+			
+			$data['general_content'] = strtr($data['general_content'], $dictionary);
 			$this->createTemplate($data);
 		}
 		

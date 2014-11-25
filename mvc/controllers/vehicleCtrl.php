@@ -664,7 +664,7 @@
 					$Inventories[] = $linea;
 				}
 				foreach ($Inventories as $row) {
-					if(strcasecmp($row['status'], 'EXIT')!=0){
+					if(strcasecmp($row['status'], 'ADMISSION')==0){
 						$new_fila = $fila;
 						$fecha = new DateTime($row['date']);
 						$id=$row['idVehicle'];
@@ -728,7 +728,6 @@
 					$IDPiece=isset($_POST['piece'])?$this->validateID($_POST['piece']):$NoSet=TRUE;
 					$Severity=isset($_POST['severity'])?$this->validateText($_POST['severity']):$NoSet=TRUE;
 					$IDVehicle=isset($_POST['vehicle'])?$this->validateNumber($_POST['vehicle']):$NoSet=TRUE;
-					echo "-$NoSet-";
 					$Observations=isset($_POST['observations'])?$this->validateText($_POST['observations']):$NoSet=TRUE;
 					
 					if($NoSet==FALSE){

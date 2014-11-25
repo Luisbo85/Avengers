@@ -100,6 +100,9 @@
 							$this->goHome();
 						}
 						break;
+					case 'recover':
+						$this->recover();
+						break;
 					default:
 					  break;
 				}
@@ -246,7 +249,7 @@
 						}
 					}
 					else{
-						$this->msgError();
+						$this->msgError('Datos ingresados son erroneos');
 					}
 				}
 				else{
@@ -599,7 +602,29 @@
 			return $Users;	
 		}
 		
-		
+		private function recover(){
+			if(empty($_POST)){
+				$data['page_title']='Recuperar Contraseña';
+				$data['general_content']=file_get_contents('./views/userRecover.html');
+				$this->createTemplate($data);
+			}
+			else{
+				$NoSet=FALSE; //Flag to determine if the variables are set
+				$User=isset($_POST['user'])?$this->validateUserName($_POST['user']):$NoSet=TRUE;
+				$Email=isset($_POST['email'])?$this->validateEmail($_POST['email']):$NoSet=TRUE;
+				if($NoSet==FALSE){
+					if($User and $Email){
+						
+					}
+					else{
+						
+					}
+				}
+				else{
+					$this->msgError('Faltaron campos por llenar');
+				}
+			}
+		}
 	   
 	}
 ?>

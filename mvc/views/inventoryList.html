@@ -3,8 +3,10 @@
           <div class="col-sm-3 col-md-2 sidebar">
 	        <ul class="nav nav-sidebar">
 	          <li><a href="?ctrl=inventory&act=create">Registrar Inventario</a></li>
+	          <li><a href="?ctrl=inventory&act=update">Modificar Inventario</a></li>
+	          <li><a href="?ctrl=inventory&act=delete">Eliminar Inventario</a></li>
+	          <li class="active"><a href="?ctrl=inventory&act=list">Listado de Inventarios<span class="sr-only">(current)</span></a></li>
 	          <li><a href="?ctrl=inventory&act=piece">Agregar Pieza</a></li>
-	          <li class="active"><a href="">Listado de Inventarios<span class="sr-only">(current)</span></a></li>
 	        </ul>
 		  </div>
         </div>
@@ -41,6 +43,12 @@
 				</td>
 				<td>
 					{date}
+				</td>
+				<td>
+					<a href="./index.php?ctrl=inventory&act=update&id={id}">Modificar</a>
+				</td>
+				<td>
+					<a href="./index.php?ctrl=inventory&act=delete&id={id}">Eliminar</a>
 				</td>
 			</tr>
           </tbody>
