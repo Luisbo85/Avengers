@@ -98,7 +98,10 @@
 			return FALSE;
 		}
 		
-
+		/**
+		 * With this function can build a template for all pages on the web site
+		 * @param array $data
+		 */
 		function createTemplate($data){
 			$header = file_get_contents('./views/cabecera.html');
 			$footer = file_get_contents('./views/pie.html');			
@@ -112,10 +115,17 @@
 			echo $view;
 		}
 
+		/**
+		 * Return to root directory
+		 */
 		function goHome(){
 			header('Location: ./');
 		}
 		
+		/**
+		 * With this function can build a error template for all pages on the web site
+		 * @param array $data
+		 */
 		function msgError($msg=''){
 			$data['page_title']='Error';
 			$data['general_content']=file_get_contents('views/Error.html');
@@ -127,6 +137,9 @@
 			$this->createTemplate($data);
 		}
 		
+		/**
+		 * Show a msg in case that a user don´t access to some options
+		 */
 		function noAccess(){
 			$data['page_title']='Sin Acceso';
 			$data['general_content']=file_get_contents('views/NoAccess.html');

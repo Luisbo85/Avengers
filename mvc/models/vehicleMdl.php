@@ -45,7 +45,7 @@
 						$result=$idVehicle;
 					}
 					else{
-						$result=$this->bdDriver->insert_id;
+						$result=FALSE;
 					}
 				}
 
@@ -240,8 +240,11 @@
 		
 		/**
 		 * Do a consult with database and get the user´s vehicle list in a Result Object
+		 * @param int $ID
+		 * @return mixed $result
 		 */
 		function vehicles($ID){
+			$ID=$this->bdDriver->real_escape_string($ID);
 			$result = $this->bdDriver->query(" SELECT V.* FROM Vehicle V
     										   INNER JOIN VehicleUser VU
     										   ON V.idVehicle = VU.idVehicle 
@@ -250,6 +253,18 @@
 			return $result;
 		}
 		
-		
+		/**
+		 * Do a consult with database and get the user data in a Result Object
+		 * @param int $ID
+		 * @return mixed $result
+		 */
+		function vehicleOwner($ID){
+			$ID=$this->bdDriver->real_escape_string($ID);
+			$result = $this->bdDriver->query(" SELECT U.name,U.paternalLastname,U.maternalLastname,U.email FROM User U 
+											   INNER JOIN VehicleUser VU ON U.idUser=VU.idUser
+											   							 AND VU.idVehicle=$ID
+											   INNER JOIN Vehicle V ON VU.idVehicle=V.idVehicle");
+			return $result;
+		}
 	}
 ?>

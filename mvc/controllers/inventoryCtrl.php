@@ -9,6 +9,9 @@
 	    	$this->model=new InventoryMdl();
 		}
 	  
+	  	/**
+		 * This select the correct method in the class
+		 */
 		function run(){
 			if(isset($_GET['act'])){
 				switch($_GET['act']){
@@ -115,7 +118,7 @@
 		}
 	  
 		/**
-		 * Create a new Inventory register
+		 * Create a new Inventory register. Do data validations
 		 */
 		private function create(){
 			if(empty($_POST)){
@@ -259,6 +262,9 @@
 			}
 		}
 
+		/**
+		 * Show a list with all active Inventories. Consult database and get the list 
+		 */
 		private function listInventories(){
 			//Select all Inventories
 			$result=$this->model->listInventories();
@@ -305,6 +311,9 @@
 			return $result;
 		}
 
+		/**
+		 * Create a new piece into system. First validate information
+		 */
 		private function piece(){
 			if(empty($_POST)){
 				$data['page_title']='Agregar Pieza';
@@ -581,6 +590,9 @@
 			}
 		}
 		
+		/**
+		 * Delete a inventory from the system.
+		 */
 		private function delete(){
 			if(!isset($_GET['id'])){
 				$result=$this->listInventories();
@@ -680,6 +692,10 @@
 				}
 			}
 		}
+
+		/**
+		 * Get all register pieces 
+		 */
 		private function selectPieces(){
 			$Pieces=$this->model->selectPieces();
 			return $Pieces;

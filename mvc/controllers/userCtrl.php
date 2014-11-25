@@ -8,6 +8,9 @@
 	    	$this->model=new UserMdl();
 		}
 	  
+	    /**
+		 * This select the correct method in the class
+		 */
 		function run(){
 			if(isset($_GET['act'])){
 				switch($_GET['act']){
@@ -482,7 +485,6 @@
 							//Update information of an user
 							$Result=$this->model->update($ID,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
 				 			if($Result){
-				  				require('views/userModified.php');
 				  				require('controllers/mail.php');
 								$subject = 'Correo de actualizacion de datos usuario';
 								$body = 'Los datos del usuario ' . $Name . ' ' . $MaternalLastname . ' ' . $PaternalLastname . ' se han actualizado.';
@@ -602,6 +604,10 @@
 			return $Users;	
 		}
 		
+		
+		/**
+		 * If a user don´t remeber is password this function can change the password
+		 */
 		private function recover(){
 			if(empty($_POST)){
 				$data['page_title']='Recuperar Contraseña';
@@ -614,14 +620,51 @@
 				$Email=isset($_POST['email'])?$this->validateEmail($_POST['email']):$NoSet=TRUE;
 				if($NoSet==FALSE){
 					if($User and $Email){
-						
+						$result=$this->model->recover($User,$Email);
+						if($result){
+							require('controllers/mail.php');
+							$subject = 'Solicitud de recuperación de contraseña';
+							$body = 'El usuario ' . $User . ' solicitó la reposición de la contraseña de su<br>
+									 cuenta a la página prow.vv.si.<br>
+									 Su contraseña nueva es '.$result;
+							$mail = new Email($Email, $subject, $body);
+							$mail->send();
+							$vista=file_get_contents('./views/userSuccessRecover.html');
+							$footer=file_get_contents('./views/pie.html');
+							echo $vista;
+						}
+						else{
+							$vista=file_get_contents('views/userErrorRecover.html');
+							$msg='Usuario o Email no encontrado en el Sistema';
+							$dictionary = array(
+								'{msg}' => "<p>$msg</p>",
+								);
+							
+							$vista = strtr($vista, $dictionary).file_get_contents('./views/pie.html');
+							echo $vista;
+						}
 					}
 					else{
+						$vista=file_get_contents('views/userErrorRecover.html');
+						$msg='Datos Erroneos';
+						$dictionary = array(
+							'{msg}' => "<p>$msg</p>",
+							);
 						
+						$vista = strtr($vista, $dictionary).file_get_contents('./views/pie.html');
+						echo $vista;
 					}
+				
 				}
 				else{
-					$this->msgError('Faltaron campos por llenar');
+					$vista=file_get_contents('views/userErrorRecover.html');
+							$msg='Faltaron Campos por llenar';
+							$dictionary = array(
+								'{msg}' => "<p>$msg</p>",
+								);
+							
+							$vista = strtr($vista, $dictionary).file_get_contents('./views/pie.html');
+							echo $vista;
 				}
 			}
 		}

@@ -373,7 +373,15 @@
 			if($result) {
 				
 				$filas = '<option value="'.$result.'">'.$vin.'</option>';
-				
+				$result=$this->model->vehicleOwner($result);
+				$Owner=$result->fetch_assoc();
+				require('controllers/mail.php');
+				$subject = 'Registro de vehiculo en el Sistema';
+				$body = 'Hola ' . $Owner['name'] .' '.$Owner['paternalLastname'].' '.$Owner['maternalLastname']. 
+						'<br> se le informa que su vehiculo con el vin '.$vin.'a sido registrado.';
+				$mail = new Email($Owner['email'], $subject, $body);
+				$mail->send();
+							
 				require('models/inventoryMdl.php');
 				$inventoryMdl=new InventoryMdl();
 				$result=$inventoryMdl->selectPieces();
@@ -737,6 +745,16 @@
 							$Result=$this->model->exitVehicle($Mileage,$Gasoline,$IDPiece,$Severity,$IDVehicle,$Observations);
 							
 							if($Result!=FALSE){
+								$result=$this->model->vehicleOwner($result);
+								$Owner=$result->fetch_assoc();
+								require('controllers/mail.php');
+								$subject = 'Salida de Vehiculo';
+								$body = 'Hola ' . $Owner['name'] .' '.$Owner['paternalLastname'].' '.$Owner['maternalLastname']. 
+										'<br> se le informa que su vehiculo con el vin '.$vin.'a sido revisado por el taller<br>
+										si gusta puede pasar ya por vehiculo.';
+								$mail = new Email($Owner['email'], $subject, $body);
+								$mail->send();
+								
 								require('models/inventoryMdl.php');
 								$InventoryMdl=new InventoryMdl();
 								$Inventories=$InventoryMdl->listInventories();

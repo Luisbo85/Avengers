@@ -144,8 +144,32 @@
 			return $Users;
 		}
 		
-		function recover(){
-			
+		/**
+		 * Search a user and email in the database if it found return a true
+		 * @param string $User
+		 * @param string $Email
+		 * @param string $Pass
+		 * @return boolean $Recover
+		 */
+		function recover($User,$Email){
+			$Recover=FALSE;
+			$User=$this->DbDriver->real_escape_string($User);
+			$Email=$this->DbDriver->real_escape_string($Email);
+			$result=$this->DbDriver->query("SELECT idUser,password FROM User
+											WHERE email='$Email'
+											AND user='$User'");
+			if($result!=FALSE){
+				$data=$result->fetch_assoc();
+				$Pass='Xmg32VklM';
+				
+				$ID=$data['idUser'];
+				$result=$this->DbDriver->query("UPDATE User SET password='$Pass' 
+												WHERE idUser=$ID");	
+				if($result){
+					$Recover=$Pass;
+				}			
+			}
+			return $Recover;
 		}
 	}
 ?>
