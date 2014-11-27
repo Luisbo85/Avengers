@@ -46,6 +46,15 @@
 							$this->goHome();
 						}
 			  			break;
+					case 'changepass':
+						//User is valid and have permissions
+			  			if($this->isLogged()){
+			  				$this->changepass();
+			  			}
+						else{
+							$this->goHome();
+						}
+						break;
 					case 'delete':
 						//User is valid and have permissions
 						if($this->isLogged()){
@@ -483,7 +492,7 @@
 						if($Correct==TRUE){
 							
 							//Update information of an user
-							$Result=$this->model->update($ID,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
+							$Result=$this->model->update($ID,$User,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone);
 				 			if($Result){
 				  				require('controllers/mail.php');
 								$subject = 'Correo de actualizacion de datos usuario';
@@ -665,6 +674,43 @@
 							
 							$vista = strtr($vista, $dictionary).file_get_contents('./views/pie.html');
 							echo $vista;
+				}
+			}
+		}
+
+		/**
+		 * Show the form to change the password and change it
+		 */
+		private function changepass(){
+			if(empty($_POST)){
+				$data['page_title']='Cambiar Contraseña';
+				$data['general_content']=file_get_contents('./views/userChangePass.html');
+				$this->createTemplate($data);
+			}
+			else{
+				$NoSet=FALSE; //Flag to determine if the variables are set
+				
+				$Pass1=isset($_POST['pass1'])?$this->validatePassword($_POST['pass1']):$NoSet=TRUE;
+				$Pass2=isset($_POST['pass2'])?$this->validatePassword($_POST['pass2']):$NoSet=TRUE;
+				
+				if($NoSet==FALSE){
+					if($Pass1!=FALSE and $Pass2!=FALSE and strcmp($Pass1, $Pass2)==0){
+						$result=$this->model->changepass($Pass1);
+						if($result){
+							$data['page_title']='Cambiar Contraseña';
+							$data['general_content']=file_get_contents('./views/passwordChanged.html');
+							$this->createTemplate($data);
+						}
+						else{
+							$this->msgError('Problemas a l intentar cambiar la contraseña');
+						}
+					}
+					else{
+						$this->msgError('Datos Erroneos');
+					}
+				}
+				else{
+					$this->msgError('Faltan datos por registrar');
 				}
 			}
 		}

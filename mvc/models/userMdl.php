@@ -83,8 +83,9 @@
 		 * @param string $Property
 		 * @return boolean $Modified  
 		 */
-		function update($ID,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone){
-			$Modified=TRUE;
+		function update($ID,$User,$Name,$MaternalLastname,$PaternalLastname,$Email,$Job,$Telephone){
+			$Modified=FALSE;
+			$User=$this->DbDriver->real_escape_string($User);
 			$Name=$this->DbDriver->real_escape_string($Name);
 			$PaternalLastname=$this->DbDriver->real_escape_string($PaternalLastname);
 			$MaternalLastname=$this->DbDriver->real_escape_string($MaternalLastname);
@@ -92,13 +93,14 @@
 			$Job=$this->DbDriver->real_escape_string($Job);
 			$Telephone=$this->DbDriver->real_escape_string($Telephone);
 			//Update in the Database
-			if($stmt=$this->DbDriver->prepare("UPDATE User SET name=?,
+			if($stmt=$this->DbDriver->prepare("UPDATE User SET  user=?,
+																name=?,
 																paternalLastname=?,
 																maternalLastname=?,
 																email=?,
 																job=?,
 																telephone=? WHERE idUser=?")){
-				$stmt->bind_param('ssssssi',$Name,$PaternalLastname,$MaternalLastname,$Email,$Job,$Telephone,$ID);
+				$stmt->bind_param('sssssssi',$User,$Name,$PaternalLastname,$MaternalLastname,$Email,$Job,$Telephone,$ID);
 				if($stmt->execute()==TRUE and $stmt->affected_rows>0){
 					$Modified=TRUE;
 				}
@@ -170,6 +172,20 @@
 				}			
 			}
 			return $Recover;
+		}
+		
+		/**
+		 * Go to database and change the password with password param
+		 * @param string $pass
+		 * @return boolean $success
+		 */
+		function changepass($pass){
+			$success=FALSE;
+			$pass=$this->DbDriver->real_escape_string($pass);
+			$ID=$_SESSION['IDuser'];
+			$success=$this->DbDriver->query("UPDATE User SET password='$pass' 
+												WHERE idUser=$ID");
+			return $success;
 		}
 	}
 ?>
